@@ -10,6 +10,7 @@ tic %starts the clock
 %% Declaring Important Global (Strucutral) Variables => i.e. That apply
 % to the entire strucutre not to local elements
 
+%this line is from Omair and not helen
 %this change should show up in omair and not main
 
     % This part will calculate infered Essential variables
