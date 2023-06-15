@@ -10,6 +10,8 @@ tic %starts the clock
 %% Declaring Important Global (Strucutral) Variables => i.e. That apply
 % to the entire strucutre not to local elements
 
+
+%this line is from helens
     % This part will calculate infered Essential variables
     % ------------------------------------------------------------------------
     %comit
