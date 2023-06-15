@@ -35,8 +35,17 @@ tic %starts the clock
             
             geom = evalin('base','nodal_coordinate_values'); %Geom Matrix
             connec = evalin('base','nodal_connectivity_values'); %connec Matrix
-                        
-            number_of_nodes_per_element = NXE * NYE; %Number of Nodes per element
+             
+
+            % This input will ask for the element type
+            Element_Type = evalin('base','Element_Type');
+            
+            if Element_Type == 3
+                number_of_nodes_per_element = 3;
+            else
+                number_of_nodes_per_element = NXE * NYE; %Number of Nodes per element
+            end
+           
             assignin('base','number_of_nodes_per_element',number_of_nodes_per_element);
     
             Number_of_Elements = length(nodal_connectivity_values); % Infered Number of Elements
@@ -68,9 +77,7 @@ tic %starts the clock
             Y_origin = 0. ; % y origin of the global coordinate system
             
             
-          % This input will ask for the element type
 
-            Element_Type = evalin('base','Element_Type');
 
 %         % This input will ask for the number of degree of freedoms per node
 %             %CHANGE number_of_dof_per_element to number_of_dof_per_node
@@ -168,13 +175,12 @@ tic %starts the clock
             
                 External_load = evalin('base','External_Load');
                 Nodal_load= External_load(:,1);
-                Force=External_load(:,2);
-                Locations_where_Load_applies  = External_load(:,3);
+                Force=External_load(:,2:4);
                 
                 Load = zeros(Number_of_Nodes,3);    
                 
                 for i=1:length(Nodal_load)
-                    Load(Nodal_load(i),Locations_where_Load_applies(i)) = Force(i);
+                    Load(Nodal_load(i),:) = Force(i,:);
                 end
                 
                 
