@@ -14,7 +14,7 @@ tic %starts the clock
     % ------------------------------------------------------------------------
     
     global geom ngpb nf_g  dees ngps deeb connec total_numbers_of_active_dof Number_of_Nodes Number_of_Elements Degrees_of_Freedom_Per_Element number_of_nodes_per_element nf dim number_of_dof_per_node
-%     change
+
             number_of_dof_per_node = evalin('base','nodof');
             dim = evalin('base','dim');
             Boundry_Conditions = evalin('base','Boundry_Conditions');
