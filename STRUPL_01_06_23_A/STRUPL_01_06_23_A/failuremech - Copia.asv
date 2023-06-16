@@ -1,0 +1,19 @@
+function [YDOT]=failuremech(NY,TA);
+%
+%test for collapse mechanism
+% 
+%
+% display ('In failuremech')
+
+%
+%
+
+% display ('collapse mechanism')
+                     NYM1=NY-1
+                     NY2=NY+2
+                     YDOT(NY,1)=1;
+                     YDOT(1:NYM1,1)=TA(1:NYM1,NY2);
+% display ('out failuremech')
+                     
+
+             end
