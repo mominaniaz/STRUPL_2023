@@ -281,21 +281,21 @@ tic %starts the clock
     
     assignin('base','delta',delta);
     %
-     if Element_Type==3
-          for i=1: Number_of_Nodes %
-        if nf_g(i,1) == 0 %
-            x_disp =0.; %
-        else
-            x_disp = delta(nf_g(i,1)); %
+    if Element_Type==3
+        for i=1: Number_of_Nodes %
+            if nf_g(i,1) == 0 %
+                x_disp =0.; %
+            else
+                x_disp = delta(nf_g(i,1)); %
+            end
+            %
+            if nf_g(i,2) == 0 %
+                y_disp = 0.; %
+            else
+                y_disp = delta(nf_g(i,2)); %
+            end
         end
-        %
-        if nf_g(i,2) == 0 %
-            y_disp = 0.; %
-        else
-            y_disp = delta(nf_g(i,2)); %
-        end
-     
-        end
+    end
         disp([i x_disp y_disp]) % Display displacements of each node
         DISP(i,:) = [ x_disp y_disp];
     format short e
