@@ -83,10 +83,9 @@ tic %starts the clock
 
 %         % This input will ask for the number of degree of freedoms per node
 %             %CHANGE number_of_dof_per_element to number_of_dof_per_node
-
             ngpb = evalin('base','ngpb');
             ngps = evalin('base','ngps');
-           
+            
 %% This Part will ask for NON_GLOBAL Input DATA => That applies to local individual elements
 
 % % This Part will ask for File Inputs necessary for further analysis
