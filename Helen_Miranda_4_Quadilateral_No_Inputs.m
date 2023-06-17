@@ -225,7 +225,7 @@ tic %starts the clock
             Global_stiffness_matrix = zeros(total_numbers_of_active_dof,total_numbers_of_active_dof);
             %
             for iel=1:Number_of_Elements           % loop for the total number of elements
-                    if Element_type==3 && ngps==0
+                    if Element_Type==3 && ngps==0
                         %         ke=thickness_of_Plate*A*B_Matrix'*D_Matrix*B_Matrix; % Integrate stiffness matrix
                         %         KK=form_KK(KK,ke, g);
                         %             x1 = geom(connec(iel,1),1); y1 = geom(connec(iel,1),2);
@@ -337,7 +337,7 @@ tic %starts the clock
     %
     
     %
-    
+
         if Element_Type == 3 %Parlas
             for i=1: Number_of_Nodes %
                 if nf_g(i,1) == 0 %
@@ -351,15 +351,13 @@ tic %starts the clock
                 else
                     y_disp = delta(nf_g(i,2)); %
                 end
+                disp([i x_disp y_disp]) % Display displacements of each node
+                DISP(i,:) = [ x_disp y_disp];
             end
         end
 
     
-    
 
-    
-        disp([i x_disp y_disp]) % Display displacements of each node
-        DISP(i,:) = [ x_disp y_disp];
     
     format short e
     disp('node w_disp x_slope y_slope ') %
