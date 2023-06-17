@@ -169,13 +169,12 @@ tic %starts the clock
             
                 External_load = evalin('base','External_Load');
                 Nodal_load= External_load(:,1);
-                Force=External_load(:,2);
-                Locations_where_Load_applies  = External_load(:,3);
+                Force=External_load(:,2:4);
                 
                 Load = zeros(Number_of_Nodes,3);    
                 
                 for i=1:length(Nodal_load)
-                    Load(Nodal_load(i),Locations_where_Load_applies(i)) = Force(i);
+                    Load(Nodal_load(i),1:3) = Force(i,1:3);
                 end
                 
                 
