@@ -10,12 +10,13 @@ tic %starts the clock
 %% Declaring Important Global (Strucutral) Variables => i.e. That apply
 % to the entire strucutre not to local elements
 
+%this line is from Omair and not helen
+%this change should show up in omair and not main
+
 %this line is from helens
     % This part will calculate infered Essential variables
-    %THIS IS A NEW COMMENT
-    %THIS IS A NEW CHANGE
     % ------------------------------------------------------------------------
-    % CHanges for GIT
+    %comit
     global geom ngpb nf_g  dees ngps deeb connec total_numbers_of_active_dof Number_of_Nodes Number_of_Elements Degrees_of_Freedom_Per_Element number_of_nodes_per_element nf dim number_of_dof_per_node
 
             number_of_dof_per_node = evalin('base','nodof');
@@ -35,17 +36,8 @@ tic %starts the clock
             
             geom = evalin('base','nodal_coordinate_values'); %Geom Matrix
             connec = evalin('base','nodal_connectivity_values'); %connec Matrix
-             
-
-            % This input will ask for the element type
-            Element_Type = evalin('base','Element_Type');
-            
-            if Element_Type == 3
-                number_of_nodes_per_element = 3;
-            else
-                number_of_nodes_per_element = NXE * NYE; %Number of Nodes per element
-            end
-           
+                        
+            number_of_nodes_per_element = NXE * NYE; %Number of Nodes per element
             assignin('base','number_of_nodes_per_element',number_of_nodes_per_element);
     
             Number_of_Elements = length(nodal_connectivity_values); % Infered Number of Elements
@@ -77,13 +69,16 @@ tic %starts the clock
             Y_origin = 0. ; % y origin of the global coordinate system
             
             
+          % This input will ask for the element type
 
+            Element_Type = evalin('base','Element_Type');
 
 %         % This input will ask for the number of degree of freedoms per node
 %             %CHANGE number_of_dof_per_element to number_of_dof_per_node
+
             ngpb = evalin('base','ngpb');
             ngps = evalin('base','ngps');
-            
+           
 %% This Part will ask for NON_GLOBAL Input DATA => That applies to local individual elements
 
 % % This Part will ask for File Inputs necessary for further analysis
@@ -174,12 +169,13 @@ tic %starts the clock
             
                 External_load = evalin('base','External_Load');
                 Nodal_load= External_load(:,1);
-                Force=External_load(:,2:4);
+                Force=External_load(:,2);
+                Locations_where_Load_applies  = External_load(:,3);
                 
                 Load = zeros(Number_of_Nodes,3);    
                 
                 for i=1:length(Nodal_load)
-                    Load(Nodal_load(i),:) = Force(i,:);
+                    Load(Nodal_load(i),Locations_where_Load_applies(i)) = Force(i);
                 end
                 
                 
@@ -224,59 +220,6 @@ tic %starts the clock
             Global_stiffness_matrix = zeros(total_numbers_of_active_dof,total_numbers_of_active_dof);
             %
             for iel=1:Number_of_Elements           % loop for the total number of elements
-                
-    %
-
-%     [B_Matrix] = form_B_Matrix(number_of_nodes_per_element,Degrees_of_Freedom_Per_Element,Element_type,ngpb,ngps);
-    [D_Matrix]=form_D_Matrix (Elastic_Modulus,Poisson_Ratio,thickness_of_Plate,Element_type,ngpb,ngps);
-%     [coord,g] = platelem_q8(iel) ;
-    if Element_type==3 &&  ngps==0
-%         ke=thickness_of_Plate*A*B_Matrix'*D_Matrix*B_Matrix; % Integrate stiffness matrix
-%         KK=form_KK(KK,ke, g);
-%             x1 = geom(connec(iel,1),1); y1 = geom(connec(iel,1),2);
-%             x2 = geom(connec(iel,2),1); y2 = geom(connec(iel,2),2);
-%             x3 = geom(connec(iel,3),1); y3 = geom(connec(iel,3),2);
-%         %
-%         A = (0.5)*det([1 x1 y1; ...
-%             1 x2 y2; ...
-%             1 x3 y3]);
-%         %
-%         m11 = (x2*y3 - x3*y2)/(2*A);
-%         m21 = (x3*y1 - x1*y3)/(2*A);
-%         m31 = (x1*y2 - y1*x2)/(2*A);
-%         m12 = (y2 - y3)/(2*A);
-%         m22 = (y3 - y1)/(2*A);
-%         m32 = (y1 - y2)/(2*A);
-%         m13 = (x3 - x2)/(2*A);
-%         m23 = (x1 - x3)/(2*A);
-%         m33 = (x2 -x1)/(2*A);
-%         %
-%         bee = [ m12 0 m22 0 m32 0; ...
-%             0 m13 0 m23 0 m33; ...
-%             m13 m12 m23 m22 m33 m32] ;
-%         
-%         l=0;
-%         for k=1: number_of_nodes_per_element
-%             for j=1:number_of_dof_per_node
-%                 l=l+1;
-%                 g(l)=nf_g(connec(iel,k),j);
-%             end
-%         end
-        %  end
-        [bee,g,A] = elem_T3(iel);
-        dee=formdeeb(Elastic_Modulus,Poisson_Ratio,thickness_of_Plate);
-        ke=thickness_of_Plate*A*bee'*dee*bee; % Integrate stiffness matrix
-        KK=form_KK(KK,ke, g);
-%         for i=1:Degrees_of_Freedom_Per_Element
-%             if g(i) ~= 0
-%                 for j=1: Degrees_of_Freedom_Per_Element
-%                     if g(j) ~= 0
-%                         KK(g(i),g(j))= KK(g(i),g(j)) + ke(i,j);
-%                     end
-%                 end
-%             end
-%         end
-    end
                 %
                 [coord,g] = platelem_q4(iel); % coordinates of the nodes of element i,
                 % and its steering vector
@@ -340,32 +283,7 @@ tic %starts the clock
     
     assignin('base','delta',delta);
     %
-    if Element_Type == 3 %Parlas
-        for i=1: Number_of_Nodes %
-            if nf_g(i,1) == 0 %
-                x_disp =0.; %
-            else
-                x_disp = delta(nf_g(i,1)); %
-            end
-            %
-            if nf_g(i,2) == 0 %
-                y_disp = 0.; %
-            else
-                y_disp = delta(nf_g(i,2)); %
-            end
-        end
-    else if Element_Type == 4  
-        else
-            
-            
-        end
-    end
-    
-    
-
-    
-        disp([i x_disp y_disp]) % Display displacements of each node
-        DISP(i,:) = [ x_disp y_disp];
+    %
     format short e
     disp('node w_disp x_slope y_slope ') %
     for i=1: Number_of_Nodes %
