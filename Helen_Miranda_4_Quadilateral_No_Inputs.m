@@ -37,7 +37,16 @@ tic %starts the clock
             geom = evalin('base','nodal_coordinate_values'); %Geom Matrix
             connec = evalin('base','nodal_connectivity_values'); %connec Matrix
                         
-            number_of_nodes_per_element = NXE * NYE; %Number of Nodes per element
+            % This input will ask for the element type
+
+            Element_Type = evalin('base','Element_Type');
+            
+            if Element_Type == 3
+                number_of_nodes_per_element = 3;
+            else
+                number_of_nodes_per_element = NXE * NYE; %Number of Nodes per element
+            end
+            
             assignin('base','number_of_nodes_per_element',number_of_nodes_per_element);
     
             Number_of_Elements = length(nodal_connectivity_values); % Infered Number of Elements
@@ -69,15 +78,7 @@ tic %starts the clock
             Y_origin = 0. ; % y origin of the global coordinate system
             
             
-          % This input will ask for the element type
-
-            Element_Type = evalin('base','Element_Type');
-            
-            if Element_Type == 3
-                number_of_nodes_per_element = 3;
-            else
-                number_of_nodes_per_element = NXE * NYE; %Number of Nodes per element
-            end
+          
 
 %         % This input will ask for the number of degree of freedoms per node
 %             %CHANGE number_of_dof_per_element to number_of_dof_per_node
@@ -226,6 +227,9 @@ tic %starts the clock
             %
             for iel=1:Number_of_Elements           % loop for the total number of elements
                     if Element_Type==3 && ngps==0
+                         %     [B_Matrix] = form_B_Matrix(number_of_nodes_per_element,Degrees_of_Freedom_Per_Element,Element_type,ngpb,ngps);
+%                              [D_Matrix]=form_D_Matrix (Elastic_Modulus,Poisson_Ratio,thickness_of_Plate,Element_type,ngpb,ngps);
+                         
                         %         ke=thickness_of_Plate*A*B_Matrix'*D_Matrix*B_Matrix; % Integrate stiffness matrix
                         %         KK=form_KK(KK,ke, g);
                         %             x1 = geom(connec(iel,1),1); y1 = geom(connec(iel,1),2);
