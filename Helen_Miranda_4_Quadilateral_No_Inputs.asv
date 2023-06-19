@@ -211,9 +211,12 @@ tic %starts the clock
 
                     if Element_Type==3 && ngpb==0
 
-                        [bee,g,fun,A,det] = elem_T3(iel);
-%                        
-                        fg_gravity=fg_gravity+fun*Gravity_Load*det*thickness_of_plate*(-1/3); % Integrate stiffness matrix
+                        [bee,g,funA] = elem_T3(iel);
+                        [der,fun] = fmquad(sampb, ig,jg); % Derivative of shape functions
+                        % in local coordinates
+                        jac=der*coord; % Compute Jacobian matrix
+                        d=det(jac); % Compute the determinant of Jacobian matrix
+                        fg_e=fg_e+thickness_of_Plate*A*bee'*dee*bee; % Integrate stiffness matrix
 
                  for i=1:length(Nodal_load)
 

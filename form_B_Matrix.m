@@ -2,14 +2,14 @@ function[B_Matrix] = form_B_Matrix(number_of_nodes_per_element,Degrees_of_Freedo
 % This function assembles the matrix B for plane problems from the
 % derivatives of the shape functions in global coordinates
 % for a thick plate element (bending action)
-global number_of_nodes_per_element Degrees_of_Freedom_Per_Element Element_type ngpb ngps
+global number_of_nodes_per_element Degrees_of_Freedom_Per_Element Element_type ngpb ngps geom connec
 
 
 if Element_type==3 && ngpb==0
 
-    x1 = geom(connec(i,1),1); y1 = geom(connec(i,1),2);
-    x2 = geom(connec(i,2),1); y2 = geom(connec(i,2),2);
-    x3 = geom(connec(i,3),1); y3 = geom(connec(i,3),2);
+    x1 = geom(connec(iel,1),1); y1 = geom(connec(iel,1),2);
+    x2 = geom(connec(iel,2),1); y2 = geom(connec(iel,2),2);
+    x3 = geom(connec(iel,3),1); y3 = geom(connec(iel,3),2);
     %
     A = (0.5)*det([1 x1 y1; ...
         1 x2 y2; ...
