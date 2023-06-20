@@ -30,7 +30,7 @@ tic %starts the clock
             NYE = evalin('base','NYE');
             Poissons_Ratio = evalin('base','Possions_Ratio');
             thickness_of_plate = evalin('base','thickness_of_plate');
-            gamma = evalin('base','weigth density'); %Insert weigth gamma
+            gamma = evalin('base','weigth density'); %Insert weight gamma
             node = evalin('base','nodof');
             nodal_coordinate_values = evalin('base','nodal_coordinate_values');
             nodal_connectivity_values = evalin('base','nodal_connectivity_values');
@@ -203,6 +203,7 @@ clear i j
 %
 % Assign gravity load that generates body forces
 Gravity_Load=[0 ;-gamma];
+Traction_Load=[-(gamma/9.81)*cos (a)  ;-(gamma/9.81)*sen(a) ];
 
 for iel=1:Number_of_Elements  % loop for the total number of elements
     fg_gravity=zeros(total_numbers_of_active_dof,1);
@@ -210,17 +211,59 @@ for iel=1:Number_of_Elements  % loop for the total number of elements
     fg_traction=zeros(total_numbers_of_active_dof,1);
 
     if Element_Type==3 && ngpb==0
-
-        [bee,g,fun,A,det] = elem_T3(iel);
+%
+        [bee,fun_3,g,A,d_3] = elem_T3(iel);
         %
-        fg_gravity=fg_gravity+fun*Gravity_Load*d_3*thickness_of_plate*(-1/3); % Integrate stiffness matrix
+        fg_gravity=fg_gravity+fun_3*Gravity_Load*d_3*thickness_of_plate*(-1/3); % Integrate stiffness matrix
 
         for i=1:total_numbers_of_active_dof
             if g(i) ~= 0
-                for j=1: 1
+                for j=1: total_numbers_of_active_dof
                     if g(j) ~= 0
                         Global_force_vector(g(i),g(j))= Global_force_vector(g(i),g(j)) + fg_gravity(i,j);
                     end
+                end
+            end
+        end
+
+        [bee,fun_3,g,A,d_3] = elem_T3(iel);
+        fg_traction=fg_traction+fun_3*Traction_Load*thickness_of_plate; % Integrate stiffness matrix
+
+        for i=1:total_numbers_of_active_dof
+            if g(i) ~= 0
+                for j=1:total_numbers_of_active_dof
+                    if g(j) ~= 0
+                        Global_force_vector(g(i),g(j))= Global_force_vector(g(i),g(j)) + fg_traction(i,j);
+                    end
+                end
+            end
+        end
+
+        if Element_Type~=3 && ngpb~=0
+            for ig=1: ngpb
+                wi = sampb(ig,2);
+                for jg=1: ngpb
+                    wj=sampb(jg,2);
+                    [coord,g] = platelem_q8(i);
+                    [der,fun] = fmquad(sampb,Element_type,dim, ig,jg); % Derivative of shape functions
+                    % in local coordinates
+                    jac=der*coord; % Compute Jacobian matrix
+                    d=det(jac); % Compute the determinant of Jacobian matrix
+
+                    jac1=inv(jac); % Compute inverse of the Jacobian
+                    deriv=jac1*der; % Derivative of shape functions
+                    fg_gravity=fg_gravity+fun*Gravity_Load*d*thickness_of_plate*(-1/3); % Integrate stiffness matrix
+
+                    for i=1:total_numbers_of_active_dof
+                        if g(i) ~= 0
+                            for j=1: total_numbers_of_active_dof
+                                if g(j) ~= 0
+                                    Global_force_vector(g(i),g(j))= Global_force_vector(g(i),g(j)) + fg_gravity(i,j);
+                                end
+                            end
+                        end
+                    end
+
                 end
             end
         end
