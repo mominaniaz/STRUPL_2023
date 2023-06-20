@@ -22,7 +22,7 @@ function varargout = Helen_Miranda_GUI_Input(varargin)
 
 % Edit the above text to modify the response to help Helen_Miranda_GUI_Input
 
-% Last Modified by GUIDE v2.5 11-Jun-2023 21:12:09
+% Last Modified by GUIDE v2.5 20-Jun-2023 20:26:07
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -259,7 +259,7 @@ function BoundaryConditionBrowseButton_Callback(hObject, eventdata, handles)
             [FileName, Path] = uigetfile('*.txt'); %Will display File Explorer to Choose a text file
             Complete_path = strcat(Path,'\',FileName); %Concatenates string to use in declaring variable to workspace
             Boundry_Conditions = load(Complete_path); %Declaring Variable to workspace
-            assignin('base','Boundry_Conditions',Boundry_Conditions);
+            assignin('base','Boundary_Conditions',Boundry_Conditions);
             set(handles.BoundaryConditionFileName_Label,'String',FileName);
             
             clear Complete_path FileName Path
@@ -351,6 +351,9 @@ assignin('base','ngpb',ngpb);
 
 ngps = str2double(get(handles.ngps,'String'));
 assignin('base','ngps',ngps);
+
+weigth_density = str2double(get(handles.Weight_Density_TextBox,'String'));
+assignin('base','weigth_density',weigth_density);
 
 if get(handles.dim_checkbox,'Value')
     dim = 2;
@@ -604,3 +607,49 @@ function rz_enabled_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of rz_enabled
+
+
+
+function Weight_Density_Label_Callback(hObject, eventdata, handles)
+% hObject    handle to Weight_Density_Label (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of Weight_Density_Label as text
+%        str2double(get(hObject,'String')) returns contents of Weight_Density_Label as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function Weight_Density_Label_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to Weight_Density_Label (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function Weight_Density_TextBox_Callback(hObject, eventdata, handles)
+% hObject    handle to Weight_Density_TextBox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of Weight_Density_TextBox as text
+%        str2double(get(hObject,'String')) returns contents of Weight_Density_TextBox as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function Weight_Density_TextBox_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to Weight_Density_TextBox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end

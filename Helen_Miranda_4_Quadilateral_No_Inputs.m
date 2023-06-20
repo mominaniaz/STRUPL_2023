@@ -30,7 +30,7 @@ tic %starts the clock
             NYE = evalin('base','NYE');
             Poissons_Ratio = evalin('base','Possions_Ratio');
             thickness_of_plate = evalin('base','thickness_of_plate');
-            gamma = evalin('base','weigth density'); %Insert weight gamma
+            gamma = evalin('base','weigth_density'); %Insert weight gamma
             node = evalin('base','nodof');
             nodal_coordinate_values = evalin('base','nodal_coordinate_values');
             nodal_connectivity_values = evalin('base','nodal_connectivity_values');
