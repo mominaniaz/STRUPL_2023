@@ -1,4 +1,4 @@
-function[bee,fun,g,A] = elem_T3(iel)
+function[bee,fun,g,A,d_3] = elem_T3(iel)
 %
 % This function returns the coordinates of the nodes of element i
 % and its steering vector
@@ -11,9 +11,9 @@ x1 = geom(connec(iel,1),1); y1 = geom(connec(iel,1),2);
 x2 = geom(connec(iel,2),1); y2 = geom(connec(iel,2),2);
 x3 = geom(connec(iel,3),1); y3 = geom(connec(iel,3),2);
 %
-det=[1 x1 y1; ...
+d_3=det([1 x1 y1; ...
     1 x2 y2; ...
-    1 x3 y3];
+    1 x3 y3]);
 
 A = (0.5)*det([1 x1 y1; ...
     1 x2 y2; ...

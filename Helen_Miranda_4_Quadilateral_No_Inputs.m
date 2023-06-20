@@ -21,7 +21,7 @@ tic %starts the clock
 
             number_of_dof_per_node = evalin('base','nodof');
             dim = evalin('base','dim');
-            Boundry_Conditions = evalin('base','Boundry_Conditions');
+            Boundary_Conditions = evalin('base','Boundary_Conditions');
             Elastic_Modulus = evalin('base','Elastic_Modulus');
             External_Load = evalin('base','External_Load');
             Length = evalin('base','Length_of_Element');
@@ -94,18 +94,18 @@ tic %starts the clock
 
             
             % Declaring Important Variables from File
-                Boundry_Conditions_Degree_of_Freedom = Boundry_Conditions(:,1);%declaring the degree of Freedom of the Boundry Conditions
+                Boundry_Conditions_Degree_of_Freedom = Boundary_Conditions(:,1);%declaring the degree of Freedom of the Boundry Conditions
                     
                     %%TEMPORARY SPACE Populating the NF matrix-------------
                         nf = ones(Number_of_Nodes,number_of_dof_per_node); %nodal freedom matrix set to zeros
                          
-                        node_number_where_active = Boundry_Conditions(:,1); %creating a single coumn matrix with node numbers where dof are released
-                        dof_x_displacement = Boundry_Conditions(:,2); %dof release matrix from x-disp column in Boundry condition file
-                        dof_y_displacement = Boundry_Conditions(:,3); %dof release matrix from y-disp column in Boundry condition file
-                        dof_z_displacement = Boundry_Conditions(:,4); %dof release matrix from z-disp column in Boundry condition file
-                        dof_x_rotation = Boundry_Conditions(:,5); %dof release matrix from x-rotation column in Boundry condition file
-                        dof_y_rotation = Boundry_Conditions(:,6); %dof release matrix from y-rotation column in Boundry condition file
-                        dof_z_rotation = Boundry_Conditions(:,7); %dof release matrix from z-rotation column in Boundry condition file
+                        node_number_where_active = Boundary_Conditions(:,1); %creating a single coumn matrix with node numbers where dof are released
+                        dof_x_displacement = Boundary_Conditions(:,2); %dof release matrix from x-disp column in Boundry condition file
+                        dof_y_displacement = Boundary_Conditions(:,3); %dof release matrix from y-disp column in Boundry condition file
+                        dof_z_displacement = Boundary_Conditions(:,4); %dof release matrix from z-disp column in Boundry condition file
+                        dof_x_rotation = Boundary_Conditions(:,5); %dof release matrix from x-rotation column in Boundry condition file
+                        dof_y_rotation = Boundary_Conditions(:,6); %dof release matrix from y-rotation column in Boundry condition file
+                        dof_z_rotation = Boundary_Conditions(:,7); %dof release matrix from z-rotation column in Boundry condition file
                         %miss = Boundry_Conditions(:,8); %dof release matrix from last column in Boundry condition file
 
                         number_of_active_boundry_conditions = length(node_number_where_active); %total number of nodes at which releases present
@@ -182,40 +182,51 @@ tic %starts the clock
                 Force=External_load(:,2:4);
 %                 
 %% % Assemble Global force vector %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%               
-                Load = zeros(Number_of_Nodes,3);    
-                
-                for i=1:length(Nodal_load)
-                    Load(Nodal_load(i),1:3) = Force(i,1:3);
-                end
-                
-                
-                assignin('base','Load',Load);
-                
-                Global_force_vector=zeros(total_numbers_of_active_dof,1);
-                for i=1:Number_of_Nodes
-                    for j=1:number_of_dof_per_node
-                        if nf_g(i,j) ~= 0
-                            Global_force_vector(nf_g(i,j))= Load(i,j);
-                        end
+Load = zeros(Number_of_Nodes,3);
+
+for i=1:length(Nodal_load)
+    Load(Nodal_load(i),1:3) = Force(i,1:3);
+end
+
+
+assignin('base','Load',Load);
+
+Global_force_vector=zeros(total_numbers_of_active_dof,1);
+for i=1:Number_of_Nodes
+    for j=1:number_of_dof_per_node
+        if nf_g(i,j) ~= 0
+            Global_force_vector(nf_g(i,j))= Load(i,j);
+        end
+    end
+end
+clear i j
+%
+% Assign gravity load that generates body forces
+Gravity_Load=[0 ;-gamma];
+
+for iel=1:Number_of_Elements  % loop for the total number of elements
+    fg_gravity=zeros(total_numbers_of_active_dof,1);
+
+    fg_traction=zeros(total_numbers_of_active_dof,1);
+
+    if Element_Type==3 && ngpb==0
+
+        [bee,g,fun,A,det] = elem_T3(iel);
+        %
+        fg_gravity=fg_gravity+fun*Gravity_Load*d_3*thickness_of_plate*(-1/3); % Integrate stiffness matrix
+
+        for i=1:total_numbers_of_active_dof
+            if g(i) ~= 0
+                for j=1: 1
+                    if g(j) ~= 0
+                        Global_force_vector(g(i),g(j))= Global_force_vector(g(i),g(j)) + fg_gravity(i,j);
                     end
                 end
-                clear i j
-%                 
-                % Assign gravity load that generates body forces
-                Gravity_Load=[0 -gamma];
+            end
+        end
+    end
+end
 
-                for iel=1:Number_of_Elements  % loop for the total number of elements
-                    fg_gravity=zeros(total_numbers_of_active_dof,1); 
-
-                    fg_traction=zeros(total_numbers_of_active_dof,1);
-
-                    if Element_Type==3 && ngpb==0
-
-                        [bee,g,fun,A,det] = elem_T3(iel);
-%                        
-                        fg_gravity=fg_gravity+fun*Gravity_Load*det*thickness_of_plate*(-1/3); % Integrate stiffness matrix
-
-                 for i=1:length(Nodal_load)
 
                 assignin('base','fg',Global_force_vector);
                
@@ -226,8 +237,8 @@ tic %starts the clock
 % [DB]=Dr *[] depends on Dr = Eh3/12(1 − ν2) for bending 
 % and  [DS]=G[] depends on G = E/2(1 + ν) for shear
 % 
-%     deeb=formdeeb(Elastic_Modulus,Poissons_Ratio,thickness_of_plate); % Matrix of elastic properties for plate bending
-%     dees=formdees(Elastic_Modulus,Poissons_Ratio,thickness_of_plate); % Matrix of elastic properties for plate shear
+    deeb=formdeeb(Elastic_Modulus,Poissons_Ratio,thickness_of_plate); % Matrix of elastic properties for plate bending
+    dees=formdees(Elastic_Modulus,Poissons_Ratio,thickness_of_plate); % Matrix of elastic properties for plate shear
     %--------------------------------------------------------------------------
     % Input data for Numerical Integration  
     %--------------------------------------------------------------------------
