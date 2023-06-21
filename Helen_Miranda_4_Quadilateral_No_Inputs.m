@@ -202,19 +202,23 @@ end
 clear i j
 %
 % Assign gravity load that generates body forces
-Gravity_Load=[0 ;-gamma];
-Traction_Load=[-(gamma/9.81)*cos (a)  ;-(gamma/9.81)*sen(a) ];
+Gravity_Load=[0 ,-gamma]';
+% Traction_Load=[-(gamma/9.81)*cos(a)  ,-(gamma/9.81)*sen(a) ]';
 
 for iel=1:Number_of_Elements  % loop for the total number of elements
-    fg_gravity=zeros(total_numbers_of_active_dof,1);
+    % fg_gravity=zeros(total_numbers_of_active_dof,1);
 
-    fg_traction=zeros(total_numbers_of_active_dof,1);
+    % fg_traction=zeros(total_numbers_of_active_dof,1);
+
+    fg_traction = zeros(6,1);
 
     if Element_Type==3 && ngpb==0
 %
         [bee,fun_3,g,A,d_3] = elem_T3(iel);
         %
         fg_gravity=fg_gravity+fun_3*Gravity_Load*d_3*thickness_of_plate*(-1/3); % Integrate stiffness matrix
+
+        %make fg_gravity work and add it to Global Force Vector
 
         for i=1:total_numbers_of_active_dof
             if g(i) ~= 0
