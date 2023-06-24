@@ -363,6 +363,70 @@ else
     assignin('base','dim',dim);
 end
 
+dx_enabled_bool = true;
+dy_enabled_bool = true;
+dz_enabled_bool = true;
+rx_enabled_bool = true;
+rx_enabled_bool = true;
+rx_enabled_bool = true;
+
+%checking if the user wants to include dx in the analysis : Dx
+if handles.dx_enabled.Value
+    dx_enabled_bool = true;
+    assignin('base','is_dx_enabled',dx_enabled_bool);
+else
+    dx_enabled_bool = false;
+    assignin('base','is_dx_enabled',dx_enabled_bool);
+end
+
+
+%checking if the user wants to include dy in the analysis : Dy
+if handles.dy_enabled.Value
+    dy_enabled_bool = true;
+    assignin('base','is_dy_enabled',dy_enabled_bool);
+else
+    dy_enabled_bool = false;
+    assignin('base','is_dy_enabled',dy_enabled_bool);
+end
+
+%checking if the user wants to include dz in the analysis: Dz
+if handles.dz_enabled.Value
+    dz_enabled_bool = true;
+    assignin('base','is_dz_enabled',dz_enabled_bool);
+else
+    dz_enabled_bool = false;
+    assignin('base','is_dz_enabled',dz_enabled_bool);
+end
+
+%checking if the user wants to include rx in the analysis: Rx
+if handles.rx_enabled.Value
+    rx_enabled_bool = true;
+    assignin('base','is_rx_enabled',rx_enabled_bool);
+else
+    rx_enabled_bool = false;
+    assignin('base','is_rx_enabled',rx_enabled_bool);
+end
+
+%checking if the user wants to include rx in the analysis: Ry
+if handles.ry_enabled.Value
+    ry_enabled_bool = true;
+    assignin('base','is_ry_enabled',ry_enabled_bool);
+else
+    ry_enabled_bool = false;
+    assignin('base','is_ry_enabled',ry_enabled_bool);
+end
+
+%checking if the user wants to include rx in the analysis: Rz
+if handles.rz_enabled.Value
+    rz_enabled_bool = true;
+    assignin('base','is_rz_enabled',rz_enabled_bool);
+else
+    rz_enabled_bool = false;
+    assignin('base','is_rz_enabled',rz_enabled_bool);
+end
+
+
+
 
 
 

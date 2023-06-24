@@ -78,8 +78,14 @@ tic %starts the clock
             X_origin = 0. ; % x origin of the global coordinate system
             Y_origin = 0. ; % y origin of the global coordinate system
             
-            
-          
+            %Bringing dof from the workspace
+
+            is_dx_enabled = evalin('base','is_dx_enabled');
+            is_dy_enabled = evalin('base','is_dy_enabled');
+            is_dz_enabled = evalin('base','is_dz_enabled');
+            is_rx_enabled = evalin('base','is_rx_enabled');
+            is_ry_enabled = evalin('base','is_ry_enabled');
+            is_rz_enabled = evalin('base','is_rz_enabled');
 
 %         % This input will ask for the number of degree of freedoms per node
 %             %CHANGE number_of_dof_per_element to number_of_dof_per_node
@@ -114,20 +120,43 @@ tic %starts the clock
                         %meant to populate the nf matrix 
                         for i = 1:number_of_active_boundry_conditions
                                 if(dim == 2) %checking if 2D 
-                                        nf(node_number_where_active(i),1) = dof_x_displacement(i); %Changing nf at x_displacmeent
-                                        nf(node_number_where_active(i),2) = dof_y_displacement(i);
-                                        nf(node_number_where_active(i),3) = dof_x_rotation(i);
-                                else if(dim ==3) %Checking if 3D
-                                            nf(node_number_where_active(i),1) = dof_x_displacement(i);
+                                        if is_dx_enabled
+                                            nf(node_number_where_active(i),1) = dof_x_displacement(i); %Changing nf at x_displacmeent
+                                        end
+                                        if is_dy_enabled
                                             nf(node_number_where_active(i),2) = dof_y_displacement(i);
-                                            nf(node_number_where_active(i),3) = dof_z_displacement(i);
-                                            nf(node_number_where_active(i),4) = dof_x_rotation(i);
-                                            nf(node_number_where_active(i),5) = dof_y_rotation(i);
-                                            nf(node_number_where_active(i),6) = dof_z_rotation(i);
-                                            %nf(node_number_where_active(i),7) = miss(i);
+                                        end
+                                        if is_rx_enabled
+                                            nf(node_number_where_active(i),3) = dof_x_rotation(i);
+                                        end
+                                        
+                                        
+                                else 
+                                    if(dim ==3) %Checking if 3D
+                                        if is_dx_enabled
+                                            nf(node_number_where_active(i),1) = dof_x_displacement(i); %Changing nf at x_displacmeent
+                                        end
+                                        if is_dy_enabled
+                                            nf(node_number_where_active(i),2) = dof_y_displacement(i); %Changing nf at x_displacmeent
+                                        end
+                                        if is_dz_enabled
+                                            nf(node_number_where_active(i),3) = dof_z_displacement(i); %Changing nf at x_displacmeent
+                                        end
+                                        if is_rx_enabled
+                                            nf(node_number_where_active(i),4) = dof_x_rotation(i); %Changing nf at x_displacmeent
+                                        end
+                                        if is_ry_enabled
+                                            nf(node_number_where_active(i),5) = dof_y_rotation(i); %Changing nf at x_displacmeent
+                                        end
+                                        if is_rz_enabled
+                                            nf(node_number_where_active(i),6) = dof_z_rotation(i); %Changing nf at x_displacmeent
+                                        end
                                     end
                                 end                             
                         end
+
+                      
+                        assignin('base','nf',nf);
                         
                         %------------------------------------------------
                         
@@ -136,7 +165,7 @@ tic %starts the clock
                         total_numbers_of_active_dof = 0;
                         
                         for i = 1:length(nf)
-                            for j = 1:3
+                            for j = 1:number_of_dof_per_node
                                 if(nf(i,j) == 1) %checking if nf has 1 or 0
                                     total_numbers_of_active_dof = total_numbers_of_active_dof + 1; %if 1 then increase value by 1
                                 end
@@ -151,8 +180,7 @@ tic %starts the clock
                         clear dof_y_rotation
                         clear dof_z_rotation
                         clear miss      
-                        
-                        assignin('base','nf',nf);
+
                         
                         %-------------------------------------------------
                         
