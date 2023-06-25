@@ -218,7 +218,14 @@ end
 
 
 assignin('base','Load',Load);
-
+Global_force_vector = zeros(total_numbers_of_active_dof,1);
+for i=1:Number_of_Nodes
+    for j=1:number_of_dof_per_node
+        if nf_g(i,j) ~= 0
+            Global_force_vector(nf_g(i,j))= Load(i,j);
+        end
+    end
+end
 clear i j
 %
 % Assign gravity load that generates body forces
@@ -240,7 +247,6 @@ fg_gravity = zeros(total_numbers_of_active_dof, 1);
 
 % Traction_Load=[-(gamma/9.81)*cos(a)  ,-(gamma/9.81)*sen(a) ]';
 
-Global_force_vector = zeros(total_numbers_of_active_dof,1);
 current_row = 1;
 
 for iel=1:Number_of_Elements  % loop for the total number of elements
