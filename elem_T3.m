@@ -1,10 +1,9 @@
-function[bee,fun_3,g,A,d_3] = elem_T3(iel)
+function [bee,fun_3,g,A,d_3] = elem_T3(iel)
 %
 % This function returns the coordinates of the nodes of element i
 % and its steering vector
 %
-global number_of_nodes_per_element number_of_dof_per_node connec
-global nf_g geom %Element_type
+global number_of_nodes_per_element number_of_dof_per_node connec nf_g geom %Element_type
 
 % if Element_Type==3
     x1 = geom(connec(iel,1),1); y1 = geom(connec(iel,1),2);
@@ -50,14 +49,3 @@ global nf_g geom %Element_type
             g(l)=nf_g(connec(iel,k),j);
         end
     end
-% else
-%     fun_3 = 0;
-%     bee = 0;
-%     g = 0;
-%     A = 0;
-%     d_3
-% end
-
-
-%
-% End function elem_T3

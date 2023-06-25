@@ -154,7 +154,9 @@ tic %starts the clock
                                     end
                                 end                             
                         end
-                        
+
+                      
+                        assignin('base','nf',nf);
                         
                         %------------------------------------------------
                         
@@ -163,7 +165,7 @@ tic %starts the clock
                         total_numbers_of_active_dof = 0;
                         
                         for i = 1:length(nf)
-                            for j = 1:no
+                            for j = 1:number_of_dof_per_node
                                 if(nf(i,j) == 1) %checking if nf has 1 or 0
                                     total_numbers_of_active_dof = total_numbers_of_active_dof + 1; %if 1 then increase value by 1
                                 end
@@ -178,8 +180,7 @@ tic %starts the clock
                         clear dof_y_rotation
                         clear dof_z_rotation
                         clear miss      
-                        
-                        assignin('base','nf',nf);
+
                         
                         %-------------------------------------------------
                         
@@ -208,7 +209,7 @@ tic %starts the clock
                 Nodal_load= External_load(:,1);
                 Force=External_load(:,2:4);
 %                 
-%% % Assemble Global force vector %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%               
+%% Assemble Global force vector %%            
 Load = zeros(Number_of_Nodes,3);
 
 for i=1:length(Nodal_load)
@@ -230,59 +231,70 @@ clear i j
 %
 % Assign gravity load that generates body forces
 Gravity_Load=[0 ,-gamma]';
-% Traction_Load=[-(gamma/9.81)*cos(a)  ,-(gamma/9.81)*sen(a) ]';
 
-for iel=1:Number_of_Elements  % loop for the total number of elements
+% 1. Form D matrix of elastic properties
+% [DB]=Dr *[] depends on Dr = Eh3/12(1 − ν2) for bending 
+% and  [DS]=G[] depends on G = E/2(1 + ν) for shear
+% 
+    deeb=formdeeb(Elastic_Modulus,Poissons_Ratio,thickness_of_plate); % Matrix of elastic properties for plate bending
+    dees=formdees(Elastic_Modulus,Poissons_Ratio,thickness_of_plate); % Matrix of elastic properties for plate shear
+    %--------------------------------------------------------------------------
+    % Input data for Numerical Integration  
+    %--------------------------------------------------------------------------
+
+        % 1.Form the matrix containing the abscissas and the weights of Gauss points
+            sampb=gauss(ngpb); samps=gauss(ngps);
+            fg_gravity = zeros(total_numbers_of_active_dof, 1);
+            
+            % Traction_Load=[-(gamma/9.81)*cos(a)  ,-(gamma/9.81)*sen(a) ]';
+
+
+            
+for iel=1:total_numbers_of_active_dof  % loop for the total number of elements
     % fg_gravity=zeros(total_numbers_of_active_dof,1);
 
     % fg_traction=zeros(total_numbers_of_active_dof,1);
 
-    fg_traction = zeros(6,1);
+    % fg_traction = zeros(6,1);
 
-    if Element_Type==3 && ngpb==0
-%
+    if Element_Type == 3 && ngpb == 0
+        %need to find the element number for this
         [bee,fun_3,g,A,d_3] = elem_T3(iel);
         %
-        fg_gravity=fg_gravity+fun_3*Gravity_Load*d_3*thickness_of_plate*(-1/3); % Integrate stiffness matrix
+        if iel ~=1
+        fg_gravity(iel+number_of_dof_per_node*number_of_nodes_per_element - 1:iel+number_of_dof_per_node*number_of_nodes_per_element * 2 - 2)=...
+                        + fun_3 * Gravity_Load * d_3 * thickness_of_plate * (-1/3);
+          
+            %Adding the fg and Global_Force V
+            for i=el+number_of_dof_per_node*number_of_nodes_per_element - 1:iel+number_of_dof_per_node*number_of_nodes_per_element * 2 - 2
+                Global_force_vector(i) = Global_force_vector(i) + fg_gravity(i);
+            end
+        else
+            fg_gravity(iel:iel+number_of_dof_per_node*number_of_nodes_per_element - 1) = ...
+                        + fun_3 * Gravity_Load * d_3 * thickness_of_plate * (-1/3);
+           
+            for i=iel:iel+number_of_dof_per_node*number_of_nodes_per_element - 1
+                Global_force_vector(i) = Global_force_vector(i) + fg_gravity(i);
+            end
+        end
+                            % Integrate stiffness matrix
 
         %make fg_gravity work and add it to Global Force Vector
 
-        for i=1:total_numbers_of_active_dof
-            if g(i) ~= 0
-                for j=1: total_numbers_of_active_dof
-                    if g(j) ~= 0
-                        Global_force_vector(g(i),g(j))= Global_force_vector(g(i),g(j)) + fg_gravity(i,j);
-                    end
-                end
-            end
-        end
-
-        [bee,fun_3,g,A,d_3] = elem_T3(iel);
-        fg_traction=fg_traction+fun_3*Traction_Load*thickness_of_plate; % Integrate stiffness matrix
-
-        for i=1:total_numbers_of_active_dof
-            if g(i) ~= 0
-                for j=1:total_numbers_of_active_dof
-                    if g(j) ~= 0
-                        Global_force_vector(g(i),g(j))= Global_force_vector(g(i),g(j)) + fg_traction(i,j);
-                    end
-                end
-            end
-        end
-
+    else 
         if Element_Type~=3 && ngpb~=0
             for ig=1: ngpb
                 wi = sampb(ig,2);
                 for jg=1: ngpb
                     wj=sampb(jg,2);
-                    [coord,g] = platelem_q8(i);
-                    [der,fun] = fmquad(sampb,Element_type,dim, ig,jg); % Derivative of shape functions
+                    [coord,g] = platelem_q4(iel);
+                    [der,fun] = fmquad(sampb,Element_Type,dim, ig,jg); % Derivative of shape functions
                     % in local coordinates
-                    jac=der*coord; % Compute Jacobian matrix
+                    jac=der'*coord; % Compute Jacobian matrix
                     d=det(jac); % Compute the determinant of Jacobian matrix
 
-                    jac1=inv(jac); % Compute inverse of the Jacobian
-                    deriv=jac1*der; % Derivative of shape functions
+                    % jac1=inv(jac); % Compute inverse of the Jacobian
+                    deriv=jac\der'; % Derivative of shape functions
                     fg_gravity=fg_gravity+fun*Gravity_Load*d*thickness_of_plate*(-1/3); % Integrate stiffness matrix
 
                     for i=1:total_numbers_of_active_dof
@@ -428,6 +440,8 @@ end
     
     
     assignin('base','KK',Global_stiffness_matrix)
+    
+%% Displaying Results    
     %%%%%%%%%%%%%%%%%%%%%%% End of assembly %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %
     disp('Solve for unknown displacements' )

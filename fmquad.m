@@ -1,4 +1,6 @@
 function[der,fun] = fmquad(samp,Element_Type,dim, ig,jg)%,lg
+
+%% To be called only for Element_Type == 8 or == 4
 %
 % This function returns the vector of the shape function and their
 % derivatives with respect to xi and eta at the gauss points for
@@ -54,17 +56,17 @@ der(2,7)=-0.25*xim*(xi-2.*eta); der(2,8)=-1.*xim*eta;
  der(4,1)=-0.25*etap; der(4,2)=0.25*xim;
  end
 
- if Element_Type==3 && dim==2
-% shape functions
-    fun(1) = 1. - xi - eta;
-    fun(2) =  xi;
-    fun(3) =  eta; 
-% derivatives
-    der(1,1)= -1.; der(1,2)=-1.;
-    der(2,1)= 1.; der(2,2)= 0;
-    der(3,1)=0; der(3,2)=1.;
-
- end
+%  if Element_Type==3 && dim==2
+% % shape functions
+%     fun(1) = 1. - xi - eta;
+%     fun(2) =  xi;
+%     fun(3) =  eta; 
+% % derivatives
+%     der(1,1)= -1.; der(1,2)=-1.;
+%     der(2,1)= 1.; der(2,2)= 0;
+%     der(3,1)=0; der(3,2)=1.;
+% 
+%  end
  
   if Element_Type==8 && dim==3  %brick element
 % shape functions
@@ -93,7 +95,6 @@ der(3,5)=0.125*xim; der(3,6)=0.125*xip;
 der(3,7)=0.125*xip; der(3,8)=0.125*xim;
   end
 % 
-der'
 % 
 
 % end function fmquad

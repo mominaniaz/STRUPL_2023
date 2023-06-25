@@ -7,6 +7,7 @@ global Degrees_of_Freedom_Per_Element
 %
 % This function assembles the global stiffness matrix
 %
+
 for i=1:Degrees_of_Freedom_Per_Element
     if g(i) ~= 0
         for j=1: Degrees_of_Freedom_Per_Element
