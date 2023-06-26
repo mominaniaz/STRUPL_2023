@@ -302,7 +302,7 @@ for iel=1:Number_of_Elements  % loop for the total number of elements
                 end
             end
         end
-    end
+    end %what if user enters triangular with a guass point
 end
 
 
