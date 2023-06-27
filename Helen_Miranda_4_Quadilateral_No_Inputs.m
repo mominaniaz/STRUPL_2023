@@ -241,12 +241,12 @@ Gravity_Load=[0 ,-gamma]';
 % %
 % deeb=formdeeb(Elastic_Modulus,Poissons_Ratio,thickness_of_plate); % Matrix of elastic properties for plate bending
 % dees=formdees(Elastic_Modulus,Poissons_Ratio,thickness_of_plate); % Matrix of elastic properties for plate shear
-% %--------------------------------------------------------------------------
-% % Input data for Numerical Integration
-% %--------------------------------------------------------------------------
-% 
-% % 1.Form the matrix containing the abscissas and the weights of Gauss points
-% sampb=gauss(ngpb); samps=gauss(ngps);
+% --------------------------------------------------------------------------
+% Input data for Numerical Integration
+% --------------------------------------------------------------------------
+% % 
+% % % 1.Form the matrix containing the abscissas and the weights of Gauss points
+% % sampb=gauss(ngpb); samps=gauss(ngps);
 
 fg_gravity = zeros(total_numbers_of_active_dof, 1);
 
