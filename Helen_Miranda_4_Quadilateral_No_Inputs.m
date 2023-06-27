@@ -252,7 +252,7 @@ fg_gravity = zeros(total_numbers_of_active_dof, 1);
 
 % I discussed with my supervisor regarding this traction load and he
 % decides to not approach this part so we can cancel 
-% Traction_Load=[-(gamma/9.81)*cos(a)  ,-(gamma/9.81)*sen(a) ]';
+
 
 current_row = 1;
 
