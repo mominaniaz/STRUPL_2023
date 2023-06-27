@@ -252,10 +252,6 @@ current_row = 1;
 for iel=1:Number_of_Elements  % loop for the total number of elements
     % fg_gravity=zeros(total_numbers_of_active_dof,1);
 
-    % fg_traction=zeros(total_numbers_of_active_dof,1);
-
-    % fg_traction = zeros(6,1);
-
     if current_row > total_numbers_of_active_dof
         assignin('base','Global_force_vector',Global_force_vector);
         break;
@@ -265,7 +261,7 @@ for iel=1:Number_of_Elements  % loop for the total number of elements
         %need to find the element number for this
         [bee,fun_3,g,A,d_3] = elem_T3(iel);
         fg_gravity(current_row: current_row + number_of_dof_per_node*number_of_nodes_per_element - 1) = ...
-            + fun_3 * Gravity_Load * d_3 * thickness_of_plate * (-1/3);
+             (fun_3 * Gravity_Load * d_3) * thickness_of_plate * (-1/3);
 
         %Adding the fg and Global_Force Vector
         for i = current_row: current_row + number_of_dof_per_node*number_of_nodes_per_element - 1
@@ -290,7 +286,7 @@ for iel=1:Number_of_Elements  % loop for the total number of elements
                     deriv=jac\der'; % Derivative of shape functions
 
                     fg_gravity(current_row: current_row + number_of_dof_per_node*number_of_nodes_per_element - 1) = ...
-                        + fun * Gravity_Load * d * thickness_of_plate * (-1/3);
+                         fun * Gravity_Load * d * thickness_of_plate * (-1/3);
 
                     %Adding the fg and Global_Force Vector
                     for i = current_row: current_row + number_of_dof_per_node*number_of_nodes_per_element - 1
@@ -402,8 +398,6 @@ if Element_Type == 3 %Parlas
         DISP(i,:) = [ x_disp y_disp];
     end
 end
-
-
 
 
 format short e
