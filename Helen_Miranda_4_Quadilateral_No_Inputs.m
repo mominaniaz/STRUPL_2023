@@ -209,7 +209,8 @@ External_load = evalin('base','External_Load');
 Nodal_load= External_load(:,1);
 Force=External_load(:,2:4);
 %
-%% Assemble Global force vector %%
+%% Assemble Global force vector %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 1.0 Assign Concentrated load  is the first step and it is ok%
 Load = zeros(Number_of_Nodes,3);
 
 for i=1:length(Nodal_load)
@@ -228,23 +229,29 @@ for i=1:Number_of_Nodes
 end
 clear i j
 %
-% Assign gravity load that generates body forces
+% 2.0 Assign gravity load that generates body forces
 Gravity_Load=[0 ,-gamma]';
 
-% 1. Form D matrix of elastic properties
-% [DB]=Dr *[] depends on Dr = Eh3/12(1 − ν2) for bending
-% and  [DS]=G[] depends on G = E/2(1 + ν) for shear
-%
-deeb=formdeeb(Elastic_Modulus,Poissons_Ratio,thickness_of_plate); % Matrix of elastic properties for plate bending
-dees=formdees(Elastic_Modulus,Poissons_Ratio,thickness_of_plate); % Matrix of elastic properties for plate shear
-%--------------------------------------------------------------------------
-% Input data for Numerical Integration
-%--------------------------------------------------------------------------
+% the gravity load is not related to the gauss point and therefore this part doesn't
+% enter in the assign global force vector script
 
-% 1.Form the matrix containing the abscissas and the weights of Gauss points
-sampb=gauss(ngpb); samps=gauss(ngps);
+% % 1. Form D matrix of elastic properties
+% % [DB]=Dr *[] depends on Dr = Eh3/12(1 − ν2) for bending
+% % and  [DS]=G[] depends on G = E/2(1 + ν) for shear
+% %
+% deeb=formdeeb(Elastic_Modulus,Poissons_Ratio,thickness_of_plate); % Matrix of elastic properties for plate bending
+% dees=formdees(Elastic_Modulus,Poissons_Ratio,thickness_of_plate); % Matrix of elastic properties for plate shear
+% %--------------------------------------------------------------------------
+% % Input data for Numerical Integration
+% %--------------------------------------------------------------------------
+% 
+% % 1.Form the matrix containing the abscissas and the weights of Gauss points
+% sampb=gauss(ngpb); samps=gauss(ngps);
+
 fg_gravity = zeros(total_numbers_of_active_dof, 1);
 
+% I discussed with my supervisor regarding this traction load and he
+% decides to not approach this part so we can cancel 
 % Traction_Load=[-(gamma/9.81)*cos(a)  ,-(gamma/9.81)*sen(a) ]';
 
 current_row = 1;

@@ -24,7 +24,7 @@ xip=(1.+xi);
 %
 
 switch (Element_Type)
-    case (3) % for triangular element
+    case (3) % for triangular element also to be used for triangle but ngps or ngpb is different from 0
 
 
     case (4) % for rectangular element
