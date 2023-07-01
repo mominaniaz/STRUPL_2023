@@ -456,7 +456,7 @@ for i=1:Number_of_Elements
         wi = samp(ig,2);
         for jg=1: ngp
             wj=samp(jg,2);
-            [der,fun] = fmquad(samp, Element_Type, dim, ig,jg); % Derivative of shape functions
+            [der,fun] = fmquad(samp, Element_Type, dim, ig,jg,i); % Derivative of shape functions
             % in local coordinates
             jac=der'*coord; % Compute Jacobian matrix
             d=det(jac); % Compute the determinant of
