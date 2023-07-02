@@ -34,5 +34,13 @@ end
 
 nodal_connectivity_Repitition_Remover = nodal_connectivity_Repitition_Remover';
 
+for i = 1:rows 
+    for j = 1:columns
+        if nodal_connectivity_Repitition_Remover(i,j) ~= 0
+            nodal_connectivity_Repitition_Remover(i,j) = 1;
+        end
+    end
+end
+
 end
 
