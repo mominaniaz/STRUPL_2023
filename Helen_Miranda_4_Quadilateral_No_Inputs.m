@@ -243,7 +243,8 @@ dees=formdees(Elastic_Modulus,Poissons_Ratio,thickness_of_plate); % Matrix of el
 
 % 1.Form the matrix containing the abscissas and the weights of Gauss points
 sampb=gauss(ngpb); samps=gauss(ngps);
-fg_gravity = zeros(total_numbers_of_active_dof, 1);
+total_numbers_of_dof = Number_of_Elements * number_of_dof_per_node * number_of_nodes_per_element;
+fg_gravity = zeros(total_numbers_of_dof , 1);
 
 % Traction_Load=[-(gamma/9.81)*cos(a)  ,-(gamma/9.81)*sen(a) ]';
 
@@ -253,10 +254,10 @@ Nodes_Checking = Node_Repitition_Remover(nodal_connectivity_values);
 for iel=1:Number_of_Elements  % loop for the total number of elements
     % fg_gravity=zeros(total_numbers_of_active_dof,1);
 
-    if current_row > total_numbers_of_active_dof
-        assignin('base','Global_force_vector',Global_force_vector);
-        break;
-    end
+    % if current_row > total_numbers_of_active_dof
+    %     assignin('base','Global_force_vector',Global_force_vector);
+    %     break;
+    % end
 
     if Element_Type == 3 && ngpb == 0
         %need to find the element number for this
@@ -265,9 +266,9 @@ for iel=1:Number_of_Elements  % loop for the total number of elements
         Nodes_Checking_Degree_Of_Freedom = ones(number_of_dof_per_node * number_of_nodes_per_element,1);
     
         index = 1;
-        for i = 1: number_of_dof_per_node
-            for j = 1:number_of_nodes_per_element
-                Nodes_Checking_Degree_Of_Freedom(index) = Nodes_Checking_Degree_Of_Freedom(index) * Nodes_Checking(iel,j);
+        for i = 1: number_of_nodes_per_element 
+            for j = 1:number_of_dof_per_node
+                Nodes_Checking_Degree_Of_Freedom(index) = Nodes_Checking_Degree_Of_Freedom(index) * Nodes_Checking(iel,i);
                 index = index + 1;
             end
         end
@@ -276,10 +277,10 @@ for iel=1:Number_of_Elements  % loop for the total number of elements
         fg_gravity(current_row: current_row + number_of_dof_per_node*number_of_nodes_per_element - 1) = ...
             Nodes_Checking_Degree_Of_Freedom .* (fun_3 * Gravity_Load * d_3) * thickness_of_plate * (-1/3);
 
-        %Adding the fg and Global_Force Vector
-        for i = current_row: current_row + number_of_dof_per_node*number_of_nodes_per_element - 1
-            Global_force_vector(i) = Global_force_vector(i) + fg_gravity(i);
-        end
+        % %Adding the fg and Global_Force Vector
+        % for i = current_row: current_row + number_of_dof_per_node*number_of_nodes_per_element - 1
+        %     Global_force_vector(i) = Global_force_vector(i) + fg_gravity(i);
+        % end
 
         current_row = current_row + number_of_dof_per_node * number_of_nodes_per_element;
 
