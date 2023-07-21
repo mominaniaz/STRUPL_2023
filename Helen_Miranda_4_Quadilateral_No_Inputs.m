@@ -66,6 +66,17 @@ assignin('base','Total_System_Degrees_of_Freedom',Total_System_Degrees_of_Freedo
 Degrees_of_Freedom_Per_Element = number_of_nodes_per_element * number_of_dof_per_node; % degrees of freedom per element
 assignin('base','Degrees_of_Freedom_Per_Element',Degrees_of_Freedom_Per_Element);
 
+%Fracture Parameters
+sigma_t = evalin('base','sigma_t');
+Percentage_Limit_Tension = evalin('base','Percentage_Limit_Tension');
+tau = evalin('base','tau');
+Percentage_Limit_Shear = evalin('base','Percentage_Limit_Shear');
+Gf_t = evalin('base','Gf_t');
+Percentage_Fracture_Energy_Traction = evalin('base','Percentage_Fracture_Energy_Traction');
+d_u = evalin('base','d_u');
+Percentage_Ultimate_Deformation_Maximum_Step = evalin('base','Percentage_Ultimate_Deformation_Maximum_Step');
+tol = evalin('base','tol');
+
 
 %This variable will calculate the element size in the
 %x-direction
@@ -316,7 +327,7 @@ for iel=1:Number_of_Elements  % loop for the total number of elements
 end
 
 
-
+assignin('base','fg_gravity',fg_gravity);
 
 
 %
