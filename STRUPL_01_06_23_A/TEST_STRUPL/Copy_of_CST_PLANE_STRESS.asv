@@ -284,12 +284,12 @@ Resistance_vector = [Resistance_cracking; Resistance_plastic];
 %% Assemble vector b 
 Vector_b_plastic = [] ;
 for j = 1 : size(Plastic_mode,1)
-     SIGMA_principal = SIGMA(Plastic_mode(j),:) * Normal_stress(Plastic_mode(j),:)' ;
-    Vector_b_plastic = [Vector_b_plastic; SIGMA_principal] ;
+    es_op = SIGMA(Plastic_mode(j),:) * NNN(Plastic_mode(j),:)' ;
+    Vector_b_plastic = [Vector_b_plastic; es_op] ;
 end
 clear j
 %Moltiplico per il volume di ciscun elemento (intragrazione nel volume)
-Vector_b_plastic = Vector_b_plastic.*Volume; 
+Vector_b_plastic = Vector_b_plastic.*Vol ; 
 
 % La componente associata alla fessurazione localizzata bb_f si calcola con
 % apposita funzione e viene poi modificata per tenere conto del softening

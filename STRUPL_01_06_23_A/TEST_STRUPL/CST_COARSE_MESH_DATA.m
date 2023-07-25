@@ -70,6 +70,12 @@ connec = [ 1, 4, 2; ...% Element 1
 17, 20, 18; ...% Element 23
 20, 21, 18]; % Element 24
 %
+%Elements coordinates
+for i = 1 : size(connec,1)
+    ex(i,:) = geom(connec(i,:),1);  %Element X coordinates
+    ey(i,:) = geom(connec(i,:),2);  %Element Y coordinates
+end
+%
 % Material
 %
 E = 200000.; % Elastic modulus in MPa
