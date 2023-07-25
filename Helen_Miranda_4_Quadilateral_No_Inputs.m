@@ -66,6 +66,17 @@ assignin('base','Total_System_Degrees_of_Freedom',Total_System_Degrees_of_Freedo
 Degrees_of_Freedom_Per_Element = number_of_nodes_per_element * number_of_dof_per_node; % degrees of freedom per element
 assignin('base','Degrees_of_Freedom_Per_Element',Degrees_of_Freedom_Per_Element);
 
+%Fracture Parameters
+sigma_t = evalin('base','sigma_t');
+Percentage_Limit_Tension = evalin('base','Percentage_Limit_Tension');
+tau = evalin('base','tau');
+Percentage_Limit_Shear = evalin('base','Percentage_Limit_Shear');
+Gf_t = evalin('base','Gf_t');
+Percentage_Fracture_Energy_Traction = evalin('base','Percentage_Fracture_Energy_Traction');
+d_u = evalin('base','d_u');
+Percentage_Ultimate_Deformation_Maximum_Step = evalin('base','Percentage_Ultimate_Deformation_Maximum_Step');
+tol = evalin('base','tol');
+
 
 %This variable will calculate the element size in the
 %x-direction
@@ -248,36 +259,52 @@ Gravity_Load=[0 ,-gamma]';
 % % % 1.Form the matrix containing the abscissas and the weights of Gauss points
 % % sampb=gauss(ngpb); samps=gauss(ngps);
 
+<<<<<<< HEAD
 fg_gravity = zeros(total_numbers_of_active_dof, 1);
+=======
+% 1.Form the matrix containing the abscissas and the weights of Gauss points
+sampb=gauss(ngpb); samps=gauss(ngps);
+total_numbers_of_dof = Number_of_Elements * number_of_dof_per_node * number_of_nodes_per_element;
+fg_gravity = zeros(total_numbers_of_dof , 1);
+>>>>>>> d15f757c9cc3da402168f8d03084c38dfdd2cd3b
 
 % I discussed with my supervisor regarding this traction load and he
 % decides to not approach this part so we can cancel 
 
 
 current_row = 1;
+Nodes_Checking = Node_Repitition_Remover(nodal_connectivity_values);
 
 for iel=1:Number_of_Elements  % loop for the total number of elements
     % fg_gravity=zeros(total_numbers_of_active_dof,1);
 
-    % fg_traction=zeros(total_numbers_of_active_dof,1);
-
-    % fg_traction = zeros(6,1);
-
-    if current_row > total_numbers_of_active_dof
-        assignin('base','Global_force_vector',Global_force_vector);
-        break;
-    end
+    % if current_row > total_numbers_of_active_dof
+    %     assignin('base','Global_force_vector',Global_force_vector);
+    %     break;
+    % end
 
     if Element_Type == 3 && ngpb == 0
         %need to find the element number for this
         [bee,fun_3,g,A,d_3] = elem_T3(iel);
-        fg_gravity(current_row: current_row + number_of_dof_per_node*number_of_nodes_per_element - 1) = ...
-            + fun_3 * Gravity_Load * d_3 * thickness_of_plate * (-1/3);
 
-        %Adding the fg and Global_Force Vector
-        for i = current_row: current_row + number_of_dof_per_node*number_of_nodes_per_element - 1
-            Global_force_vector(i) = Global_force_vector(i) + fg_gravity(i);
+        Nodes_Checking_Degree_Of_Freedom = ones(number_of_dof_per_node * number_of_nodes_per_element,1);
+    
+        index = 1;
+        for i = 1: number_of_nodes_per_element 
+            for j = 1:number_of_dof_per_node
+                Nodes_Checking_Degree_Of_Freedom(index) = Nodes_Checking_Degree_Of_Freedom(index) * Nodes_Checking(iel,i);
+                index = index + 1;
+            end
         end
+
+
+        fg_gravity(current_row: current_row + number_of_dof_per_node*number_of_nodes_per_element - 1) = ...
+            Nodes_Checking_Degree_Of_Freedom .* (fun_3 * Gravity_Load * d_3) * thickness_of_plate * (-1/3);
+
+        % %Adding the fg and Global_Force Vector
+        % for i = current_row: current_row + number_of_dof_per_node*number_of_nodes_per_element - 1
+        %     Global_force_vector(i) = Global_force_vector(i) + fg_gravity(i);
+        % end
 
         current_row = current_row + number_of_dof_per_node * number_of_nodes_per_element;
 
@@ -297,7 +324,7 @@ for iel=1:Number_of_Elements  % loop for the total number of elements
                     deriv=jac\der'; % Derivative of shape functions
 
                     fg_gravity(current_row: current_row + number_of_dof_per_node*number_of_nodes_per_element - 1) = ...
-                        + fun * Gravity_Load * d * thickness_of_plate * (-1/3);
+                        fun * Gravity_Load * d * thickness_of_plate * (-1/3);
 
                     %Adding the fg and Global_Force Vector
                     for i = current_row: current_row + number_of_dof_per_node*number_of_nodes_per_element - 1
@@ -313,7 +340,7 @@ for iel=1:Number_of_Elements  % loop for the total number of elements
 end
 
 
-
+assignin('base','fg_gravity',fg_gravity);
 
 
 %
@@ -411,8 +438,6 @@ if Element_Type == 3 %Parlas
 end
 
 
-
-
 format short e
 disp('node w_disp x_slope y_slope ') %
 for i=1: Number_of_Nodes %
@@ -469,7 +494,7 @@ for i=1:Number_of_Elements
         wi = samp(ig,2);
         for jg=1: ngp
             wj=samp(jg,2);
-            [der,fun] = fmquad(samp, Element_Type, dim, ig,jg); % Derivative of shape functions
+            [der,fun] = fmquad(samp, Element_Type, dim, ig,jg,i); % Derivative of shape functions
             % in local coordinates
             jac=der'*coord; % Compute Jacobian matrix
             d=det(jac); % Compute the determinant of
