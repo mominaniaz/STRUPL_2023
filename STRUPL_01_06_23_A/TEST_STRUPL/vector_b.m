@@ -1,6 +1,8 @@
 function [bb, ef] = vector_b(et,ex,ey,N,C,F,b,bc,D,Cp,Cpp,Be,Bee,NN)
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
+%This that guys code
+
 
 nnd = N(1); %Number of nodes
 nel = N(2) ; %Number of elements

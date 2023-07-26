@@ -22,7 +22,7 @@ function varargout = Helen_Miranda_GUI_Input(varargin)
 
 % Edit the above text to modify the response to help Helen_Miranda_GUI_Input
 
-% Last Modified by GUIDE v2.5 20-Jul-2023 23:01:33
+% Last Modified by GUIDE v2.5 25-Jul-2023 20:45:39
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -324,7 +324,6 @@ assignin('base','Elastic_Modulus',Elastic_Modulus);
 
 Possions_Ratio = str2double(get(handles.Possions_Ratio_TextBox,'String'));
 assignin('base','Possions_Ratio',Possions_Ratio);
-
 
 
 % Element Inputs
@@ -1159,3 +1158,12 @@ function tol_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+
+function Length_of_Element_Textbox_Callback(hObject, eventdata, handles)
+% hObject    handle to Length_of_Element_Textbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+% Hints: get(hObject,'String') returns contents of Length_of_Element_Textbox as text
+%        str2double(get(hObject,'String')) returns contents of Length_of_Element_Textbox as a double

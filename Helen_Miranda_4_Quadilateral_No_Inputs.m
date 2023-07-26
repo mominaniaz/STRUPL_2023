@@ -259,14 +259,14 @@ Gravity_Load=[0 ,-gamma]';
 % % % 1.Form the matrix containing the abscissas and the weights of Gauss points
 % % sampb=gauss(ngpb); samps=gauss(ngps);
 
-<<<<<<< HEAD
+% <<<<<<< HEAD
 fg_gravity = zeros(total_numbers_of_active_dof, 1);
-=======
+% =======
 % 1.Form the matrix containing the abscissas and the weights of Gauss points
 sampb=gauss(ngpb); samps=gauss(ngps);
 total_numbers_of_dof = Number_of_Elements * number_of_dof_per_node * number_of_nodes_per_element;
 fg_gravity = zeros(total_numbers_of_dof , 1);
->>>>>>> d15f757c9cc3da402168f8d03084c38dfdd2cd3b
+% >>>>>>> d15f757c9cc3da402168f8d03084c38dfdd2cd3b
 
 % I discussed with my supervisor regarding this traction load and he
 % decides to not approach this part so we can cancel 
