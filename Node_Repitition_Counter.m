@@ -37,10 +37,10 @@ gamma = evalin('base','weigth_density');
 thickness_of_plate = evalin('base','thickness_of_plate');
 number_of_dof_per_node = evalin('base','nodof');
 Element_Type = evalin('base','Element_Type');
-number_of_dof_per_node = evalin('base','nodof');
+number_of_nodes_per_element = evalin('base','number_of_nodes_per_element');
 nodal_coordinate_values = evalin('base','nodal_coordinate_values');
 Number_of_Nodes = length(nodal_coordinate_values); % Infered Number of Nodes in the System
-fg_gravity = zeros(number_of_elements * Number_of_Nodes * number_of_dof_per_node,1);
+fg_gravity = zeros(number_of_elements * number_of_nodes_per_element * number_of_dof_per_node,1);
 
 if Element_Type == 3
     number_of_nodes_per_element = 3;
