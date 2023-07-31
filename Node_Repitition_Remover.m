@@ -7,7 +7,6 @@ nodal_connectivity_Repitition_Remover = zeros(rows,columns);
 index_length = rows*columns;
 
 
-
 nodal_connectivity_Repitition_Remover = nodal_connectivity_Repitition_Remover';
 nodal_connectivity_values = nodal_connectivity_values';
 
