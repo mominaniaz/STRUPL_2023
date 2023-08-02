@@ -256,7 +256,7 @@ crack_path_2=[];
 % crack_path=[1 5;1 5; 2 10; 2 10];
 % working on this part that is crucial 
 crack_path_2 = Gcrack(Normal_stress, nnd, connec, sigma_t, geom);
-idx=crack_path_2(:,3)~=0;
+idx=crack_path_2(:,3)~=0; shshfsf
 Number_of_crack_nodes=sum(idx(:));
 crack_direction=repelem(crack_path_2(:,3),2,1);
 crack_nodes_lines=[ 2 5 7 0 0 0 0;2 5  8 10 0 0 0;2 5 8 11 13 0 0;2 5 8 11 14 16 0;2 5 8 11 14 17 0 ;2 5 8 11 14 17 19;3 5 7 0 0 0 0;3 5 8 10 0 0 0;3 5 8 11 13 0 0;3 5 8 11 14 16 0;3 5 8 11 14 17 0;3 5 8 11 14 17 19];
