@@ -4,11 +4,13 @@ function crack_path_2 = Gcrack(Normal_stress, Number_of_Nodes, nodal_connectivit
 crack_path_1 = zeros(24,3);
 
 Repitition_Remover = Node_Repitition_Remover(nodal_connectivity_values);
+%Change to checking all nodes repittions to see if any one 
+%exceeds sigma_t
 
 for i = 1:rows
     for j = 1:columns
         if Repitition_Remover(i,j) == 1
-            if Normal_stress(i,j) > sigma_t
+            if abs(Normal_stress(i,j)) > sigma_t
                 crack_path_1(i,j) = Normal_stress(i,j);
             end
         end
@@ -37,7 +39,7 @@ end
 for k = 1:Number_of_Nodes %going over the nodes
     if crack_path_2(k,2) ~= 0 %chekcing if the point is overstressed
         Length = 0;
-        for l = k-3:k+3 %Looping over nearby nodes
+        for l = k-4:k+4 %Looping over nearby nodes
             if l > 1 && l < Number_of_Nodes
             if crack_path_2(l,2) ~= 0 %Checking if the nearby nodes are overstressed
                     % Finding Differences and adding them up
