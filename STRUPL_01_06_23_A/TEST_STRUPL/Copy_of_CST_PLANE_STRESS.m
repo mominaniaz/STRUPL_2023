@@ -249,11 +249,12 @@ for j = 1 : size(Plastic_mode,1)
 end
 clear j
 %%  Computes Resistance vector Function%% 
-crack_path_2=[];% this vector is the former IL vector from manuela and franchi codes is formed by 1st column prone crack nodes and 2dn column is the length 
+crack_path_2=[];
+% this vector is the former IL vector from manuela and franchi codes is formed by 1st column prone crack nodes and 2dn column is the length 
 % a pre-check loop is replaced here where it  checks the limit tension if
 % exceeds in the SIGMA_alpha array.
 % crack_path=[1 5;1 5; 2 10; 2 10];
-% ;
+% working on this part that is crucial 
 crack_path_2 = Gcrack(Normal_stress, nnd, connec, sigma_t, geom);
 idx=crack_path_2(:,3)~=0;
 Number_of_crack_nodes=sum(idx(:));
