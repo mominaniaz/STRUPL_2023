@@ -20,7 +20,7 @@ fid =fopen('CST_COARSE_MESH_RESULTS.txt','w');
 % supply another input file
 %
 CST_COARSE_MESH_DATA;
-
+PlotMesh(geom,connec)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%% End of input%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -52,57 +52,65 @@ end
 %%%%%%%%%%%%%%%%%%%%%%% End of assembly %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %% Compute global displacement vector and reaction%%
-delta = KK\fg ; % solve for unknown displacements
-Reaction=KK*delta-fg;
-%
-node_disp=zeros(nnd,2);
-%
-for i=1: nnd %
-if nf(i,1) == 0 %
-x_disp =0.; %
-else
-x_disp = delta(nf(i,1)); %
-end
-%
-if nf(i,2) == 0 %
-y_disp = 0.; %
-else
-y_disp = delta(nf(i,2)); %
-end
-node_disp(i,:) =[x_disp y_disp];
-end
-%
-% Retrieve the x_coord and y_disp of the nodes located on the neutral axis
-%
-k = 0;
-for i=1:nnd;
-if geom(i,2)== 0.
-k=k+1;
-x_coord(k) = geom(i,1);
-vertical_disp(k)=node_disp(i,2);
-end
-end
-%% Compute stress and strain %%
-%
-for i=1:nel
-[bee,g,A] = elem_T3(i); % Form strain matrix, and steering vector
-eld=zeros(eldof,1); % Initialize element displacement to zero
-for m=1:eldof
-if g(m)==0 
-    eld(m)=0.;
-else %
-eld(m)=delta(g(m)); % Retrieve element displacement
-end
-end
-%
-eps=bee*eld; % Compute strains
-EPS(i,:)=eps ; % Store strains for all elements
-sigma=dee*eps; % Compute stresses
-SIGMA(i,:)=sigma ; % Store stress for all elements
-end
-%
+[delta,Reaction,node_displacement,SIGMA,STRAIN]=Elastic_solve(KK,fg,nf,dee,bee,thick);
+% for i=1:nel
+% Internal_forces=zeros(nnd,1);  
+% element_force=[] ;
+% Internal_forces=Internal_forces+bee'*sigma*A*thick; 
+% element_force=[element_force; Internal_forces'];
+% end
+% delta = KK\fg ; % solve for unknown displacements
+% Reaction=KK*delta-fg;
+% %
+% node_disp=zeros(nnd,2);
+% %
+% for i=1: nnd %
+% if nf(i,1) == 0 %
+% x_disp =0.; %
+% else
+% x_disp = delta(nf(i,1)); %
+% end
+% %
+% if nf(i,2) == 0 %
+% y_disp = 0.; %
+% else
+% y_disp = delta(nf(i,2)); %
+% end
+% node_disp(i,:) =[x_disp y_disp];
+% end
+% %
+% % Retrieve the x_coord and y_disp of the nodes located on the neutral axis
+% %
+% k = 0;
+% for i=1:nnd;
+% if geom(i,2)== 0.
+% k=k+1;
+% x_coord(k) = geom(i,1);
+% vertical_disp(k)=node_disp(i,2);
+% end
+% end
+% %% Compute stress and strain %%
+% %
+% for i=1:nel
+% [bee,g,A] = elem_T3(i); % Form strain matrix, and steering vector
+% eld=zeros(eldof,1); % Initialize element displacement to zero
+% for m=1:eldof
+% if g(m)==0 
+%     eld(m)=0.;
+% else %
+% eld(m)=delta(g(m)); % Retrieve element displacement
+% end
+% end
+% %
+% eps=bee*eld; % Compute strains
+% EPS(i,:)=eps ; % Store strains for all elements
+% sigma=dee*eps; % Compute stresses
+% SIGMA(i,:)=sigma ; % Store stress for all elements
+% end
+% %
 %% Compute for each element the plastic multiplier that activates the plastic mode This part is a function related to yield function drucker pragher [alpha_b,Normal_stress]
-%Macro-cracks
+%Macro-cracks parameters
+%
 sigma_t = 0.1198; % Limit tension [MPa]
 tau = 0.1198; % Limit shear [MPa]
 tau_m = tau*3 ; %Valore di tau per macrofess
@@ -113,14 +121,13 @@ w_s = 2 * Gf_s/(tau) ;
 h_s_t = -sigma_t /w_t  ; %softening parameter
 h_s_s = -tau /w_s  ; %softening parameter
 %Micro-cracks (Drucker-Prager parameters)
+%
 Plastic_mode = [1:1:nel]'; %Plastic mode
 d_u = 0.019 ; %Ultimate deformation
 coeff_h = 0.01 ; %percentuale di resistanza in corrispondenza del quale si attiva l'hardning
 % h_t = ((1-coeff_h)*sigma_t /d_u) ; %hardening parameter
 % h_s = ((1-coeff_h)*tau/d_u) ; %hardening parameter
 h_t = (0.9*sigma_t /d_u) ; %hardening parameter
-
-
 sigma_t_r = coeff_h * sigma_t ; % Limit traction
 sigma_c = sigma_t_r  ; % Limit compression
 %-------------------------
@@ -219,8 +226,8 @@ for j = 1 : size(Plastic_mode,1)
     nnn = [dphi_dsigmax dphi_dsigmay dphi_dsigmaxy]  ;
     nnn_n = nnn/norm(nnn) ;
     Normal_stress = [Normal_stress; nnn_n] ;
-    %implement the recovery  stress to find the Normal_nodal_stress
-    % Avverage for nodes
+%Implement the recovery  stress to find the Normal_nodal_stress
+% Avverage for nodes
 % Normal_stressR=zeros(nnd,6); % Initial global stress matrix by nodes
 % for i=1:nnd;
 %  Normal_stressR(i,1:3)=zeros(3,1);
@@ -239,17 +246,21 @@ for j = 1 : size(Plastic_mode,1)
 % end;
 % end
 
-
-
-
 end
 clear j
 %%  Computes Resistance vector Function%% 
-%crack_path=[];% this vector is the former IL vector from manuela and franchi codes is formed by 1st column prone crack nodes and 2dn column is the length 
+crack_path_2=[];% this vector is the former IL vector from manuela and franchi codes is formed by 1st column prone crack nodes and 2dn column is the length 
 % a pre-check loop is replaced here where it  checks the limit tension if
 % exceeds in the SIGMA_alpha array.
-crack_path=[1 5;1 5; 2 10; 2 10];
-crack_direction=crack_path(:,2);
+% crack_path=[1 5;1 5; 2 10; 2 10];
+% ;
+crack_path_2 = Gcrack(Normal_stress, nnd, connec, sigma_t, geom);
+Number_of_crack_nodes=idx=A==0
+out=sum(idx(:)
+crack_direction=repelem(crack_path_2(:,3),2,1);
+crack_nodes_lines=[ 2 5 7 0 0 0 0;2 5  8 10 0 0 0;2 5 8 11 13 0 0;2 5 8 11 14 16 0;2 5 8 11 14 17 0 ;2 5 8 11 14 17 19;3 5 7 0 0 0 0;3 5 8 10 0 0 0;3 5 8 11 13 0 0;3 5 8 11 14 16 0;3 5 8 11 14 17 0;3 5 8 11 14 17 19];
+Number_of_crack_lines= length(crack_nodes_lines);
+%
 % The volume of elements is important in the integration
 Volume = [];
 for i = 1 : Plastic_mode
@@ -263,7 +274,7 @@ RR(2:2:end) = crack_direction(2:2:end)*thick*tau_m;%nodes that failure in shear
 % resistance relative ai modi di fessurazione localizzata (prodotto della
 % % tensione  limite per l'area di influenza di ciascun nodo, calcolata a
 
-Resistance_cracking = zeros(2*2*size(crack_path(:,1),1),1) ;
+Resistance_cracking = zeros(2*2*size(crack_path_2(:,1),1),1) ;
 for rr = 1 : size(RR,1)
     Resistance_cracking(2*rr-1) = RR(rr) ;
 end
@@ -281,29 +292,47 @@ clear j
 Resistance_plastic = Resistance_plastic.*Volume ;
 
 Resistance_vector = [Resistance_cracking; Resistance_plastic];
-%% Assemble vector b 
-Vector_b_plastic = [] ;
+%% Assemble vector b %%%%%%%%
+%Assemblage of nodal rotation matrix
+% beta
+% for cc = 1 : size(Cp,1)
+%     if cc == 1
+%         [NN] = Rotation_matrix(Beta(cc,2),Beta(cc,3)) ;
+%     else
+%         [NN] = [NN; Rotation_matrix(Beta(cc,2),Beta(cc,3))] ;
+%     end
+% end
+% Computes internal force
+Vector_b_plastic= [];
+Vector_b_cracking= [];
 for j = 1 : size(Plastic_mode,1)
-    es_op = SIGMA(Plastic_mode(j),:) * NNN(Plastic_mode(j),:)' ;
-    Vector_b_plastic = [Vector_b_plastic; es_op] ;
+     SIGMA_principal = SIGMA(Plastic_mode(j),:) * Normal_stress(Plastic_mode(j),:)' ;
+    Vector_b_plastic = [Vector_b_plastic; SIGMA_principal] ;
 end
 clear j
 %Moltiplico per il volume di ciscun elemento (intragrazione nel volume)
-Vector_b_plastic = Vector_b_plastic.*Vol ; 
+Vector_b_plastic = Vector_b_plastic.*Volume; 
 
 % La componente associata alla fessurazione localizzata bb_f si calcola con
 % apposita funzione e viene poi modificata per tenere conto del softening
 
-[bbf, ef] = vector_b(et,ex,ey,N,C,F,b,bc,D,Cp,Cpp,Be,Bee,NN) ;
+% [Vector_B] = vector_b(et,ex,ey,N,C,F,b,bc,D,Cp,Cpp,Be,Bee,NN) ;
+% 
+% bb_f = zeros(2*size(bbf,1),1) ;
+% for xx = 1 : size(bbf,1)
+%     bb_f(2*xx-1) = bbf(xx);
+%     bb_f(2*xx) = bbf(xx);
+% end
+% clear xx
+% 
+% Vector_B = [bb_f; Vector_b_plastic] ;
+%
 
-bb_f = zeros(2*size(bbf,1),1) ;
-for xx = 1 : size(bbf,1)
-    bb_f(2*xx-1) = bbf(xx);
-    bb_f(2*xx) = bbf(xx);
-end
-clear xx
+%% Assemble Matrix A %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bb = [bb_f; Vector_b_plastic] ;
+
+
+[A_Matrix]=form_Matrix_A(Normality_Matrix,dee,bee,KK);
 % Print results to file
 %
 print_CST_results;

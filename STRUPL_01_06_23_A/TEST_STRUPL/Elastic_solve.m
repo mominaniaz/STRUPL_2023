@@ -1,4 +1,4 @@
-function[delta,Reaction,node_displacement,SIGMA,STRAIN]=Elastic_solve(KK,fg,nf,dee,bee)
+function[delta,Reaction,node_displacement,SIGMA,STRAIN,sigma]=Elastic_solve(KK,fg,nf,dee,bee,thick)
 
 global nnd nel geom eldof 
 % dealta is related to nodal dislplacement
@@ -37,6 +37,7 @@ end
 for i=1:nel
 [bee,g,A] = elem_T3(i); % Form strain matrix, and steering vector
 eld=zeros(eldof,1); % Initialize element displacement to zero
+
 for m=1:eldof
 if g(m)==0 
     eld(m)=0.;
@@ -49,4 +50,25 @@ eps=bee*eld; % Compute strains
 STRAIN(i,:)=eps ; % Store strains for all elements
 sigma=dee*eps; % Compute stresses
 SIGMA(i,:)=sigma ; % Store stress for all elements
+end
+
+%
+% %Computes internal forces
+% 
+% % for i=1:ngp
+% %       indx=[ 2*i-1; 2*i ];
+% %       detJ=det(JT(indx,:)) ;
+% %     if detJ<tol
+% %         disp('Jacobideterminant equal or less than zero!')
+% %     end
+% %       JTinv=inv(JT(indx,:));
+% %       dNx=JTinv*dNr(indx,:);
+% % 
+% %       B(1,1:2:2*nn-1)=dNx(1,:);
+% %       B(2,2:2:2*nn)  =dNx(2,:);
+% %       B(3,1:2:2*nn-1)=dNx(2,:);
+% %       B(3,2:2:2*nn)  =dNx(1,:);
+%       
+%       
+% end
 end

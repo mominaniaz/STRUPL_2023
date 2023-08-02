@@ -33,5 +33,5 @@ fprintf(fid, 'element epsilon_(xx) epsilon_(yy) gamma_(xy)\n');
 %
 for i=1:nel
 fprintf(fid,' %g, %7.4e, %7.4e, %7.4e\n',i, ...
-EPS(i,1),EPS(i,2),EPS(i,3));
+STRAIN(i,1),STRAIN(i,2),STRAIN(i,3));
 end
