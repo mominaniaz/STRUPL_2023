@@ -312,5 +312,26 @@ clim([cmin cmax])
 patch('Faces', connec, 'Vertices', geom, 'FaceVertexCData',x_stress, ...
 'Facecolor','flat','Marker','.')
 colorbar;
-
+% % Deformed --------------------------------------------------------------
+% figure('Name','Deformed shape')
+% k=2;
+% x=ex' ;
+% y=ey';
+% xc=[x; x(1,:)];
+% yc=[y; y(1,:)];
+% x_d=(ex+k*ed(:,[1 3 5]))';   
+% y_d=(ey+k*ed(:,[2 4 6]))';
+% xc_d=[x_d; x_d(1,:)];
+% yc_d=[y_d; y_d(1,:)];
+% hold on
+% axis equal
+% plot(xc,yc,'Color',[0.7 0.7 0.7]);
+% plot(xc_d,yc_d,'k') ;
+% set(0,'defaultlinelinewidth',1.5);
+% ax.GridLineStyle = '-';
+% % grid on
+% box on
+% % xlim([-200 1400]) ;
+% % ylim([-200 1400]) ;
+% saveas(gcf,'figure18.png')
 toc
