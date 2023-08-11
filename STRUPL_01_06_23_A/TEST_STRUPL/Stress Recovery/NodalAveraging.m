@@ -1,4 +1,4 @@
-function [stressavg] = NodalAveraging(stress_N,type)
+function stressavg = NodalAveraging(stress_N,type)
 %--------------------------------------------------------------------------
 % Purpose:
 %         Nodal averaging of elemental nodal stresses
@@ -17,14 +17,14 @@ function [stressavg] = NodalAveraging(stress_N,type)
 nnode = length(coordinates);
 stressavg = zeros(nnode,3);
 for ind = 1:nnode
-    [r c] = find(nodes==ind) ;
+    r = find(nodes==ind);
     switch type
         case 'average'
         share = length(r) ;
         case 'sum'
         share = 1 ;
     end
-    ele = 4*(r-1)+c ;
+    ele = 4*(r-1);
     stress=[sum(stress_N(ele,1))/share.....
             sum(stress_N(ele,2))/share.....
             sum(stress_N(ele,3))/share];                        

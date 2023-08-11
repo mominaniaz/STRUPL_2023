@@ -1,22 +1,24 @@
 function crack_path_2 = Gcrack(Normal_stress, Number_of_Nodes, nodal_connectivity_values, sigma_t, Coordinates_Plate)
 
 [rows,columns] = size(Normal_stress);
-crack_path_1 = zeros(24,3);
 
 Repitition_Remover = Node_Repitition_Remover(nodal_connectivity_values);
-%Change to checking all nodes repittions to see if any one 
-%exceeds sigma_t
+% %Change to checking all nodes repittions to see if any one 
+% %exceeds sigma_t
+% 
+% 
+% 
+% for i = 1:rows
+%     for j = 1:columns
+%         if Repitition_Remover(i,j) == 1
+%             if abs(Normal_stress(i,j)) > sigma_t
+%                 crack_path_1(i,j) = Normal_stress(i,j);
+%             end
+%         end
+%     end
+% end
 
-for i = 1:rows
-    for j = 1:columns
-        if Repitition_Remover(i,j) == 1
-            if abs(Normal_stress(i,j)) > sigma_t
-                crack_path_1(i,j) = Normal_stress(i,j);
-            end
-        end
-    end
-end
-
+crack_path_1 = Node_Highest_Stress_Identifier(nodal_connectivity_values,Normal_stress,sigma_t);
 
 crack_path_2 = zeros(21,3);
 
