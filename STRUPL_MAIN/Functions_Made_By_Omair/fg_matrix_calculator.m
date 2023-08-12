@@ -1,9 +1,13 @@
-function fg_gravity_Final_end = Node_Repitition_Counter(number_of_elements,nodal_connectivity_values,number_of_nodes,nf)
+function fg_gravity_Final_end = fg_matrix_calculator(number_of_elements,nodal_connectivity_values,number_of_nodes,nf)
+
+%% Finding a matrix that will provide the number of times a node is repeated and work with fg_matrix to 
+% find the gravity loading matrix in tune witht the Global_Force_Vector so
+% these two can be added.
 
 [rows,columns] = size(nodal_connectivity_values);
 index_length = rows*columns;
 
-%% Finding a matrix that will provide the number of times a node is repeated
+
 
 % node_repitition = zeros(number_of_nodes,1);
 % 

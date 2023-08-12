@@ -273,7 +273,7 @@ sampb=gauss(ngpb); samps=gauss(ngps);
 
 current_row = 1;
 
-fg_gravity = Node_Repitition_Counter(Number_of_Elements,nodal_connectivity_values,Number_of_Nodes,nf);
+fg_gravity = fg_matrix_calculator(Number_of_Elements,nodal_connectivity_values,Number_of_Nodes,nf);
 
 Global_force_vector = fg_gravity(1:total_numbers_of_active_dof,1) + Global_force_vector;
 

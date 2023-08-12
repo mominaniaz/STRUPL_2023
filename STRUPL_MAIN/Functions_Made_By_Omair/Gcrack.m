@@ -1,5 +1,6 @@
-function crack_path_2 = Gcrack(Normal_stress, Number_of_Nodes, nodal_connectivity_values, sigma_t, Coordinates_Plate)
+function crack_path_2 = Gcrack(Normal_stress, Number_of_Nodes, nodal_connectivity_values, sigma_t, Coordinates_Plate,Purpose)
 
+%% Function used to calculate the nodal Stresses from a matrix with element stresses
 [rows,columns] = size(Normal_stress);
 
 Repitition_Remover = Node_Repitition_Remover(nodal_connectivity_values);
@@ -18,7 +19,7 @@ Repitition_Remover = Node_Repitition_Remover(nodal_connectivity_values);
 %     end
 % end
 
-crack_path_1 = Node_Highest_Stress_Identifier(nodal_connectivity_values,Normal_stress,sigma_t);
+crack_path_1 = Node_Highest_Stress_Identifier(nodal_connectivity_values,Normal_stress,sigma_t,Purpose);
 
 crack_path_2 = zeros(21,3);
 

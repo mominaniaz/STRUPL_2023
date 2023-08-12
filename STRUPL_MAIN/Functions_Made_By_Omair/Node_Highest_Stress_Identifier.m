@@ -1,4 +1,4 @@
-function node_highest_stress = Node_Highest_Stress_Identifier(nodal_connectivity_values,Normal_stress,sigma_t)
+function node_highest_stress = Node_Highest_Stress_Identifier(nodal_connectivity_values,Normal_stress,sigma_t,Purpose)
 
 Repitition_Remover = Node_Repitition_Remover(nodal_connectivity_values);
 Repitition_Remover = Repitition_Remover';
@@ -25,7 +25,13 @@ for index = 1:index_length
         % end 
             if nodal_connectivity_values(index) == nodal_connectivity_values(index_inside)
                 if abs(Normal_stress(index_inside)) > max_value
-                    max_value = Normal_stress(index_inside);
+                    switch Purpose
+                        case 'Reduction'
+                            max_value = max_value + Normal_stress(index_inside);
+                        case 'Crack_path'
+                            max_value = Normal_stress(index_inside);
+                    end
+                    
                 end
             end
     end

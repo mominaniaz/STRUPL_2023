@@ -220,7 +220,7 @@ crack_path_2=[];
 % exceeds in the SIGMA_alpha array.
 % crack_path=[1 5;1 5; 2 10; 2 10];
 % working on this part that is crucial 
-crack_path_2 = Gcrack(Normal_stress, nnd, connec, sigma_t, geom);
+crack_path_2 = Gcrack(Normal_stress, nnd, connec, sigma_t, geom,'Crack_path');
 idx=crack_path_2(:,3)~=0; 
 Number_of_crack_nodes=sum(idx(:));
 crack_direction=repelem(crack_path_2(:,3),2,1);
