@@ -1,5 +1,6 @@
-function PlotCrackPath(nodal_coordinte_values,nodal_connectivity_values)
+function PlotCrackPath(Crack_Path,nodal_coordinte_values,nodal_connectivity_values,Direction)
 
+%% Drawings the Graph and the Elements with Nodes
 nel = length(nodal_connectivity_values);
 nnd = length(nodal_coordinte_values);
 nne = size(nodal_connectivity_values,2);
@@ -23,5 +24,27 @@ end
     
     title('Finite Element Mesh') ;
     axis off ;
+
+%% Utilizing the Crack_path_matrix to draw the crack paths
+
+Crack_Path_Matrix_Max = sortrows(Crack_Path,2);
+
+node_configuration = Node_Configurator(nodal_coordinte_values);
+
+node_configuration = node_configuration';
+
+[rows,columns] = size(Crack_Path_Matrix_Max);
+
+%% Using the highest Cracks from Crack_Path_matrix_max and making paths to the 
+% nearest horizontal vertical etc 
+for i = 1:rows
+
+end
+
+
+
+
+
+
 
 end
