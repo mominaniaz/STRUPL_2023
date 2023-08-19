@@ -62,6 +62,7 @@ Cracks_All = {};
 %% Using the highest Cracks from Crack_Path_matrix_max and making paths to the
 % nearest horizontal vertical etc
 for i = 1:rows
+    
     % if Crack_Path_Matrix_Max(i,2) > 0
     %     break;
     % end
@@ -71,10 +72,10 @@ for i = 1:rows
 
     switch Direction
         case 'H' %Code for Horizontal
-                left = column - 1;
-                right = column + 1;
-                no_more_right = false;
-                no_more_left = false;
+            left = column - 1;
+            right = column + 1;
+            no_more_right = false;
+            no_more_left = false;
             while true
                 if left > 0 && right < columns_node_configuration + 1
                     [row_for_left,c] = find(Crack_Path_Matrix_Max == node_configuration(row,left));
@@ -87,10 +88,10 @@ for i = 1:rows
                         if no_more_left
                             break;
                         end
-                        % Now to Add Nodes to Drraw 
+                        % Now to Add Nodes to Drraw
                         Crack_Path_Draw = [Crack_Path_Draw,node_configuration(row,left)];
                         left = left - 1;
-                        no_more_right = true;                       
+                        no_more_right = true;
                     else
                         if no_more_right
                             break;
@@ -98,34 +99,46 @@ for i = 1:rows
                         % Now to Add Nodes to Drraw
                         Crack_Path_Draw = [Crack_Path_Draw,node_configuration(row,right)];
                         right = right + 1;
-                        no_more_left = true;                       
+                        no_more_left = true;
                     end
                 else
                     break;
                 end
             end
-            
+
             Crack_Path_Draw = Crack_Path_Draw';
-            
+
             [rows_crack,columns_crack] = size(Crack_Path_Draw);
 
-            for k = 1:rows_crack
-                Crack_Path_Draw(k,2) = nodal_coordinte_values(Crack_Path_Draw(k,1),1);
-                Crack_Path_Draw(k,3) = nodal_coordinte_values(Crack_Path_Draw(k,1),2);
+            if rows_crack > 1
+                for k = 1:rows_crack
+                    Crack_Path_Draw(k,2) = nodal_coordinte_values(Crack_Path_Draw(k,1),1);
+                    Crack_Path_Draw(k,3) = nodal_coordinte_values(Crack_Path_Draw(k,1),2);
+                    if k > 1
+                        X1 = nodal_coordinte_values(Crack_Path_Draw(k,1),1);
+                        Y1 = nodal_coordinte_values(Crack_Path_Draw(k,1),2);
+                        X2 = nodal_coordinte_values(Crack_Path_Draw(k-1,1),1);
+                        Y2 = nodal_coordinte_values(Crack_Path_Draw(k-1,1),2);
+                        Crack_Path_Draw(k,4) = real(asind((Y2-Y1)/(X2-X1)));
+                    else
+                        Crack_Path_Draw(k,4) = 0;
+                    end
+                end
+
+                %Now to draw it
+
+                plot(Crack_Path_Draw(:,2),Crack_Path_Draw(:,3),'Color','r');
+
+                [row_Cracks,column_Cracks] = size(Cracks_All);
+
+                Cracks_All(row_Cracks + 1,1) = {Crack_Path_Draw};
             end
 
-            %Now to draw it
-            
-            plot(Crack_Path_Draw(:,2),Crack_Path_Draw(:,3),'Color','r');
-            
-            [row_Cracks,column_Cracks] = size(Cracks_All);
-
-            Cracks_All(row_Cracks + 1,1) = {Crack_Path_Draw};
         case 'V' %Code for Vertical
-                above = row - 1;
-                below = row + 1;
-                no_more_above = false;
-                no_more_below = false;
+            above = row - 1;
+            below = row + 1;
+            no_more_above = false;
+            no_more_below = false;
             while true
                 if above > 0 && below < rows_nodes_configurtion + 1
                     [row_for_above,c] = find(Crack_Path_Matrix_Max == node_configuration(above,column));
@@ -138,10 +151,10 @@ for i = 1:rows
                         if no_more_above
                             break;
                         end
-                        % Now to Add Nodes to Drraw 
+                        % Now to Add Nodes to Drraw
                         Crack_Path_Draw = [Crack_Path_Draw,node_configuration(above,column)];
                         above = above - 1;
-                        no_more_below = true;                       
+                        no_more_below = true;
                     else
                         if no_more_below
                             break;
@@ -149,27 +162,39 @@ for i = 1:rows
                         % Now to Add Nodes to Drraw
                         Crack_Path_Draw = [Crack_Path_Draw,node_configuration(below,column)];
                         below = below + 1;
-                        no_more_above = true;                       
+                        no_more_above = true;
                     end
                 else
                     break;
                 end
             end
-            
+
             Crack_Path_Draw = Crack_Path_Draw';
-            
+
             [rows_crack,columns_crack] = size(Crack_Path_Draw);
 
-            for k = 1:rows_crack
-                Crack_Path_Draw(k,2) = nodal_coordinte_values(Crack_Path_Draw(k,1),1);
-                Crack_Path_Draw(k,3) = nodal_coordinte_values(Crack_Path_Draw(k,1),2);
-            end
-            %Now to draw it
-            plot(Crack_Path_Draw(:,2),Crack_Path_Draw(:,3),'Color','b');
-                        
-            [row_Cracks,column_Cracks] = size(Cracks_All);
+            if rows_crack > 1
+                for k = 1:rows_crack
+                    Crack_Path_Draw(k,2) = nodal_coordinte_values(Crack_Path_Draw(k,1),1);
+                    Crack_Path_Draw(k,3) = nodal_coordinte_values(Crack_Path_Draw(k,1),2);
+                    if k > 1
+                        X1 = nodal_coordinte_values(Crack_Path_Draw(k,1),1);
+                        Y1 = nodal_coordinte_values(Crack_Path_Draw(k,1),2);
+                        X2 = nodal_coordinte_values(Crack_Path_Draw(k-1,1),1);
+                        Y2 = nodal_coordinte_values(Crack_Path_Draw(k-1,1),2);
+                        Crack_Path_Draw(k,4) = real(asind((Y2-Y1)/(X2-X1)));
+                    else
+                        Crack_Path_Draw(k,4) = 0;
+                    end
+                end
+                %Now to draw it
+                plot(Crack_Path_Draw(:,2),Crack_Path_Draw(:,3),'Color','b');
 
-            Cracks_All(row_Cracks + 1,1) = {Crack_Path_Draw};
+                [row_Cracks,column_Cracks] = size(Cracks_All);
+
+                Cracks_All(row_Cracks + 1,1) = {Crack_Path_Draw};
+            end
+
 
         case 'D' %Code for Diagonal
 
@@ -223,22 +248,38 @@ for i = 1:rows
                 else
                     break;
                 end
+
+
+
                 Crack_Path_Draw = Crack_Path_Draw';
 
                 [rows_crack,columns_crack] = size(Crack_Path_Draw);
 
-                for k = 1:rows_crack
-                    Crack_Path_Draw(k,2) = nodal_coordinte_values(Crack_Path_Draw(k,1),1);
-                    Crack_Path_Draw(k,3) = nodal_coordinte_values(Crack_Path_Draw(k,1),2);
+                if rows_crack > 1
+                    for k = 1:rows_crack
+                        Crack_Path_Draw(k,2) = nodal_coordinte_values(Crack_Path_Draw(k,1),1);
+                        Crack_Path_Draw(k,3) = nodal_coordinte_values(Crack_Path_Draw(k,1),2);
+                        if k > 1
+                            X1 = nodal_coordinte_values(Crack_Path_Draw(k,1),1);
+                            Y1 = nodal_coordinte_values(Crack_Path_Draw(k,1),2);
+                            X2 = nodal_coordinte_values(Crack_Path_Draw(k-1,1),1);
+                            Y2 = nodal_coordinte_values(Crack_Path_Draw(k-1,1),2);
+                            Crack_Path_Draw(k,4) = real(atand((Y2-Y1)/(X2-X1)));
+                        else
+                            Crack_Path_Draw(k,4) = 0;
+                        end
+                    end
+
+                    %Now to draw it
+
+                    plot(Crack_Path_Draw(:,2),Crack_Path_Draw(:,3),'Color','g');
+
+                    [row_Cracks,column_Cracks] = size(Cracks_All);
+
+                    Cracks_All(row_Cracks + 1,1) = {Crack_Path_Draw};
                 end
 
-                %Now to draw it
 
-                plot(Crack_Path_Draw(:,2),Crack_Path_Draw(:,3),'Color','g');
-                
-                [row_Cracks,column_Cracks] = size(Cracks_All);
-
-                 Cracks_All(row_Cracks + 1,1) = {Crack_Path_Draw};
             end
     end
 end
