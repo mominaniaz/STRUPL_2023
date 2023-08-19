@@ -46,24 +46,13 @@ for i = 1:rows
             while true
                 left = row - 1;
                 right = row + 1;
-                no_more_right = false;
-                no_more_left = false;
 
                 if left < 1 || right > rows_nodes_configurtion
                     [row_for_left,c] = find(Crack_Path_Matrix_Max == node_configuration(left,column));
                     [row_for_right,c] = find(Crack_Path_Matrix_Max == node_configuration(right,column));
 
                     stress_value_left = Crack_Path_Matrix_Max(row_for_left,2);
-                    stress_value_right = Crack_Path_Matrix_Max(row_for_right,2);
-
-                    if stress_value_left > stress_value_right
-                        left = left - 1;
-                        no_more_right = true;
-                    else
-                        right = right + 1;
-                        no_more_left = true;
-                    end
-
+                    stress_value_right = 
                 else
                     break;
                 end
