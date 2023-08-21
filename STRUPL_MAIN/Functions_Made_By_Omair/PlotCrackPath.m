@@ -20,11 +20,11 @@ end
 f1 = figure ;
 switch Direction
     case 'H'
-        set(f1,'name','Crack Path','numbertitle','off') ;
+        % set(f1,'name','Crack Path','numbertitle','off') ;
     case 'V'
-        set(f1,'name','Crack Path','numbertitle','off') ;
+        % set(f1,'name','Crack Path','numbertitle','off') ;
     case 'D'
-        set(f1,'name','Crack Path','numbertitle','off') ;
+        % set(f1,'name','Crack Path','numbertitle','off') ;
 end
 
 plot(X,Y,'k')
@@ -49,11 +49,12 @@ Crack_Path_Matrix_Max = sortrows(Crack_Path,2);
 
 node_configuration = Node_Configurator(nodal_coordinte_values);
 
+node_configuration = nodal_coordinte_values';
+node_configuration = flipud(nodal_coordinte_values);
+node_configuration = fliplr(nodal_coordinte_values);
 
 [rows,columns] = size(Crack_Path_Matrix_Max);
-node_configuration = node_configuration';
-node_configuration = fliplr(node_configuration);
-node_configuration = flipud(node_configuration);
+
 
 [rows_nodes_configurtion,columns_node_configuration] = size(node_configuration);
 
@@ -77,7 +78,7 @@ for i = 1:rows
             no_more_right = false;
             no_more_left = false;
             while true
-                if left > 0 && right < columns_node_configuration + 1
+                if left > 0 && right < (columns_node_configuration + 1)
                     [row_for_left,c] = find(Crack_Path_Matrix_Max == node_configuration(row,left));
                     [row_for_right,c] = find(Crack_Path_Matrix_Max == node_configuration(row,right));
 
