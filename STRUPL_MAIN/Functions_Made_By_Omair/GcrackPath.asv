@@ -25,32 +25,26 @@ for k = 1:Number_of_Nodes
 end
 
 Cracks_All = {};
-node_configuration = Node_Configurator(Coordinates_Plate);
+
 
 for k = 1:Number_of_Nodes %going over the nodes
     if crack_path_2(k,2) ~= 0 %chekcing if the point is overstressed
         Crack_Path_Draw = [];
         Length = 0;
-        
-        for l = k-3:k+3 %Looping over nearby nodes
+        for l = k-4:k+4 %Looping over nearby nodes
             if l > 1 && l < Number_of_Nodes
                 if crack_path_2(l,2) ~= 0 %Checking if the nearby nodes are overstressed
                     % Finding Differences and adding them up
                     Length = Length + (0.5) * sqrt((Coordinates_Plate(k,1) - Coordinates_Plate(l,1))^2 +...
                         (Coordinates_Plate(k,2) - Coordinates_Plate(l,2))^2);
-                    Crack_Path_Draw(l-1,1) = l;
-                    Crack_Path_Draw(l-1,2) = Coordinates_Plate(l,1);
-                    Crack_Path_Draw(l-1,3) = Coordinates_Plate(l,2);
-
-
-
+                    Crack_Path_Draw(l,1) = k;
+                    Crack_Path_Draw(l,2) = Coordinates_Plate(k,1);
+                    Crack_Path_Draw(l,3) = Coordinates_Plate(k,2);
                 end
 
             end
         end
         crack_path_2(k,3) = Length; %%assisning additions to the matrix
-        [row_Cracks,column_Cracks] = size(Cracks_All);
-        Cracks_All(row_Cracks + 1,1) = {Crack_Path_Draw};
     end
 end
 
