@@ -1,23 +1,9 @@
-function crack_path_2 = Gcrack(Normal_stress, Number_of_Nodes, nodal_connectivity_values, sigma_t, Coordinates_Plate,Purpose)
+function crack_path_2 = GcrackPath(Normal_stress, Number_of_Nodes, nodal_connectivity_values, sigma_t, Coordinates_Plate,Purpose)
 
 %% Function used to calculate the nodal Stresses from a matrix with element stresses
 [rows,columns] = size(Normal_stress);
 
 Repitition_Remover = Node_Repitition_Remover(nodal_connectivity_values);
-% %Change to checking all nodes repittions to see if any one 
-% %exceeds sigma_t
-% 
-% 
-% 
-% for i = 1:rows
-%     for j = 1:columns
-%         if Repitition_Remover(i,j) == 1
-%             if abs(Normal_stress(i,j)) > sigma_t
-%                 crack_path_1(i,j) = Normal_stress(i,j);
-%             end
-%         end
-%     end
-% end
 
 crack_path_1 = Node_Highest_Stress_Identifier(nodal_connectivity_values,Normal_stress,sigma_t,Purpose);
 
@@ -39,6 +25,8 @@ for k = 1:Number_of_Nodes
 end
 
 Cracks_All = {};
+
+
 for k = 1:Number_of_Nodes %going over the nodes
     if crack_path_2(k,2) ~= 0 %chekcing if the point is overstressed
         Crack_Path_Draw = [];
@@ -49,9 +37,14 @@ for k = 1:Number_of_Nodes %going over the nodes
                     % Finding Differences and adding them up
                     Length = Length + (0.5) * sqrt((Coordinates_Plate(k,1) - Coordinates_Plate(l,1))^2 +...
                             (Coordinates_Plate(k,2) - Coordinates_Plate(l,2))^2); 
-                    Crack_Path_Draw(k,1) = nodal_coordinte_values(k,1);
-                    Crack_Path_Draw(k,1) = nodal_coordinte_values(k,1);
+                    Crack_Path_Draw(k,1) = k;
+                    Crack_Path_Draw(k,2) = Coordinates_Plate(k,1);
+                    Crack_Path_Draw(k,3) = Coordinates_Plate(k,2);
+
+                    Crack_Path_Draw = Crack_Path_Draw';
+                    [row_Cracks,column_Cracks] = size(Cracks_All);
             end
+            Cracks_All(row_Cracks + 1,1) = {Crack_Path_Draw};
             end
         end
         crack_path_2(k,3) = Length; %%assisning additions to the matrix

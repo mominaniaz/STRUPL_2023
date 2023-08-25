@@ -1,4 +1,4 @@
-function Cracks_All =  PlotCrackPath(Crack_Path,nodal_coordinte_values,nodal_connectivity_values,Direction)
+function Cracks_All =  PlotCrackPathUpdated(Crack_Path,nodal_coordinte_values,nodal_connectivity_values,Direction)
 
 %% Drawings the Graph and the Elements with Nodes
 nel = length(nodal_connectivity_values);
