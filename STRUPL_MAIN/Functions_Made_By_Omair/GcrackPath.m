@@ -1,4 +1,4 @@
-function [Crakcs_All,crack_path_2] = GcrackPath(Normal_stress, Number_of_Nodes, nodal_connectivity_values, sigma_t, Coordinates_Plate,Purpose)
+function [Cracks_All,crack_path_2] = GcrackPath(Normal_stress, Number_of_Nodes, nodal_connectivity_values, sigma_t, Coordinates_Plate,Purpose)
 
 %% Function used to calculate the nodal Stresses from a matrix with element stresses
 [rows,columns] = size(Normal_stress);
@@ -50,31 +50,53 @@ for k = 1:Number_of_Nodes %going over the nodes
 
 
         Directions = {};
+        Orientations = {};
 
         Directions(1) = {[below,left]};
+        Orientations(1) = {'W'};
+
         Directions(2) = {[row,left]};
+        Orientations(2) = {'H'};
+
         Directions(3) = {[above,left]};
+        Orientations(3) = {'D'};
 
-        Directions(4) = {[above,column]};
-        Directions(5) = {[below,column]};
+        Directions(4) = {[below,column]};
+        Orientations(4) = {'V'};
 
-        Directions(6) = {[above,right]};
+        Directions(5) = {[above,column]};
+        Orientations(5) = {'V'};
+
+        Directions(6) = {[below,right]};
+        Orientations(6) = {'D'};
+
         Directions(7) = {[row,right]};
-        Directions(8) = {[below,right]};
+        Orientations(7) = {'H'};
+
+        Directions(8) = {[above,right]};
+        Orientations(8) = {'W'};
 
         for l = 1:8
             if Directions{l}(1)> 0 && Directions{l}(1) < row_node_configuration + 1 &&  Directions{l}(2)> 0 && Directions{l}(2) < column_node_configuration + 1
 
-                Coordinates_Original = [Coordinates_Plate(node_configuration(row,column),1),Coordinates_Plate(node_configuration(row,column),2)];
+                if Orientations{l} ~= 'W'
+                    Coordinates_Original = [Coordinates_Plate(node_configuration(row,column),1),Coordinates_Plate(node_configuration(row,column),2)];
 
-                Node_at_check = node_configuration(Directions{l}(1),Directions{l}(2));
-                Coordinates_Next = [Coordinates_Plate(Node_at_check,1),Coordinates_Plate(Node_at_check,2)];
+                    Node_at_check = node_configuration(Directions{l}(1),Directions{l}(2));
+                    Coordinates_Next = [Coordinates_Plate(Node_at_check,1),Coordinates_Plate(Node_at_check,2)];
 
-                Length = Length + (0.5) * sqrt(((Coordinates_Original(k,1) - Coordinates_Next(1))^2 + ...
-                    Coordinates_Original(k,2) - Coordinates_Next(2))^2);
+                    X1 = Coordinates_Original(1);
+                    X2 = Coordinates_Next(1);
 
-                Crack_Path_Temp = [Node_at_check, Coordinates_Next(1), Coordinates_Next(2)];
-                Crack_Path_Draw = [Crack_Path_Draw; Crack_Path_Temp];
+                    Y1 =  Coordinates_Original(2);
+                    Y2 =  Coordinates_Next(2);
+
+                    Length = Length + (0.5) * sqrt(((X2 - X1)^2 + (Y2-Y1)^2));
+
+                    Crack_Path_Temp = [Node_at_check, Coordinates_Next(1), Coordinates_Next(2), Orientations(l)];
+                    Crack_Path_Draw = [Crack_Path_Draw; Crack_Path_Temp];
+                end
+
 
             end
         end
@@ -83,7 +105,4 @@ for k = 1:Number_of_Nodes %going over the nodes
         Cracks_All(row_Cracks + 1,1) = {Crack_Path_Draw};
     end
 end
-
-
-
 end
