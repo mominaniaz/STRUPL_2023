@@ -31,9 +31,10 @@ node_configuration = flipud(node_configuration);
 node_configuration = fliplr(node_configuration);
 
 for k = 1:Number_of_Nodes %going over the nodes
+    Crack_Path_Draw = [];
+    Length = 0;
     if crack_path_2(k,2) ~= 0 %chekcing if the point is overstressed
-        Crack_Path_Draw = [];
-        Length = 0;
+
         [row_node_configuration,column_node_configuration] = size(node_configuration);
         [row,column] = find(node_configuration == k);
         %Left Right Initiation
@@ -79,10 +80,10 @@ for k = 1:Number_of_Nodes %going over the nodes
         for l = 1:8
             if Directions{l}(1)> 0 && Directions{l}(1) < row_node_configuration + 1 &&  Directions{l}(2)> 0 && Directions{l}(2) < column_node_configuration + 1
 
-                if Orientations{l} ~= 'W'
-                    Coordinates_Original = [Coordinates_Plate(node_configuration(row,column),1),Coordinates_Plate(node_configuration(row,column),2)];
+                Node_at_check = node_configuration(Directions{l}(1),Directions{l}(2));
+                if crack_path_2(Node_at_check,2) ~= 0
 
-                    Node_at_check = node_configuration(Directions{l}(1),Directions{l}(2));
+                    Coordinates_Original = [Coordinates_Plate(node_configuration(row,column),1),Coordinates_Plate(node_configuration(row,column),2)];
                     Coordinates_Next = [Coordinates_Plate(Node_at_check,1),Coordinates_Plate(Node_at_check,2)];
 
                     X1 = Coordinates_Original(1);
@@ -96,13 +97,12 @@ for k = 1:Number_of_Nodes %going over the nodes
                     Crack_Path_Temp = [Node_at_check, Coordinates_Next(1), Coordinates_Next(2), Orientations(l)];
                     Crack_Path_Draw = [Crack_Path_Draw; Crack_Path_Temp];
                 end
-
-
             end
         end
-        crack_path_2(k,3) = Length; %%assisning additions to the matrix
-        [row_Cracks,column_Cracks] = size(Cracks_All);
-        Cracks_All(row_Cracks + 1,1) = {Crack_Path_Draw};
+
     end
+    crack_path_2(k,3) = Length; %%assisning additions to the matrix
+    [row_Cracks,column_Cracks] = size(Cracks_All);
+    Cracks_All(row_Cracks + 1,1) = {Crack_Path_Draw};
 end
 end
