@@ -10,7 +10,7 @@ Y = zeros(nne,nel);
 
 for iel=1:nel
     for i=1:nne
-        nd(i)=nodal_connectivity_values(iel,i);         % extract connected node for (iel)-th element
+        nd(i)=nodal_connectivity_values(iel,i);      % extract connected node for (iel)-th element
         X(i,iel)=nodal_coordinte_values(nd(i),1);    % extract x value of the node
         Y(i,iel)=nodal_coordinte_values(nd(i),2);    % extract y value of the node
     end

@@ -7,7 +7,7 @@ Repitition_Remover = Node_Repitition_Remover(nodal_connectivity_values);
 
 crack_path_1 = Node_Highest_Stress_Identifier(nodal_connectivity_values,Normal_stress,sigma_t,Purpose);
 
-crack_path_2 = zeros(21,3);
+crack_path_2 = zeros(Number_of_Nodes,3);
 
 %% Getting Element Numbers too
 
