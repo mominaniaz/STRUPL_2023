@@ -35,7 +35,6 @@ hold
 Cracks_All = {};
 Crack_Path_Matrix_Max = sortrows(Crack_Path,2);
 
-Crack_Path_Matrix_Max = flipud(Crack_Path_Matrix_Max);
 
 node_configuration = Node_Configurator(nodal_coordinte_values);
 
@@ -118,22 +117,25 @@ for i = 1:rows
             end
         end
 
+        if Higest_Node_Stress == This_Node
+            break;
+        end
+
         Coordinates_Original = [nodal_coordinte_values(This_Node,1),nodal_coordinte_values(This_Node,2)];
         Coordinates_Next = [nodal_coordinte_values(Higest_Node_Stress,1),nodal_coordinte_values(Higest_Node_Stress,2)];
-        Crack_Path_Temp = [Higest_Node_Stress, Coordinates_Next(1), Coordinates_Next(2), Orientations(l)];
+        Crack_Path_Temp = [Higest_Node_Stress, Coordinates_Next(1), Coordinates_Next(2)];
         Crack_Path_Draw = [Crack_Path_Draw; Crack_Path_Temp];
         
-        X = [Coordinates_Original(1,1) Coordinates_Next(1,1)];
-        Y = [Coordinates_Original(1,2) Coordinates_Next(1,2)];
-
-        plot(X,Y,'Color','g');
         [row,column] = find(node_configuration == Higest_Node_Stress);
     end
 
-    
-    [row_Cracks,column_Cracks] = size(Cracks_All);
-    Cracks_All(row_Cracks + 1,1) = {Crack_Path_Draw};
+    if size(Crack_Path_Draw) > 1
+        plot(Crack_Path_Draw(:,2),Crack_Path_Draw(:,3),'Color','r');
+        [row_Cracks,column_Cracks] = size(Cracks_All);
+        Cracks_All(row_Cracks + 1,1) = {Crack_Path_Draw};
+    end
 
+    
 end
 
 
