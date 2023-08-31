@@ -45,7 +45,7 @@ if nne==8
     plot(X,Y,'k')
     fill(X,Y,'w')
     
-    title('Finite Element Mesh') ;
+    title('Finite Element Mesh');
     axis off ;
     k = nodes(:,1:end);
     nd = k' ;

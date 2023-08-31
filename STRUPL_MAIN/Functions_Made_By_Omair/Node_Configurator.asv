@@ -39,37 +39,55 @@ Y_sorted = sort(Ys);
 numb_of_rows = 1;
 numb_of_columns = 1;
 
-X_Values = [min_X];
-Y_Values = [min_Y];
-
 for i = 2:size(X_sorted)
     if X_sorted(i) ~= X_sorted(i-1)
         numb_of_rows = numb_of_rows + 1;
-        X_Values = [X_Values;X_sorted(i)];
     end
 end
 
 for i = 2:size(Y_sorted)
     if Y_sorted(i) ~= Y_sorted(i-1)
         numb_of_columns = numb_of_columns + 1;
-        Y_Values = [Y_Values;Y_sorted(i)];
     end
 end
 
-    new_coordinates = zeros(rows,columns);
 
-    for i = 1:rows
-            row = find(X_Values == Coordinates(i,1));
-            column = find(Y_Values == Coordinates(i,2));
-            new_coordinates(i,1) = row;
-            new_coordinates(i,2) = column;
+
+
+% max_values = max(Coordinates);
+% min_values = min(Coordinates);
+% 
+% change_X = max_values(1) - min_values(1);
+% change_Y = max_values(2) - min_values(2);
+% 
+% 
+% increment_x = 10;
+% increment_y = 10;
+% 
+% rows  = change_X / increment_x;
+% columns = change_Y / increment_y;
+% 
+% Node_Configuration_F = zeros(rows,columns);
+
+
+    for i = 2:rows
+       if Coordinates(i,Column_Changing) ~= Coordinates(i-1,Column_Changing) && Row_Check == 0
+           nodes_configuration = current_Row;
+           current_Row = 0;
+           Row_Check = 1;
+           row_index = 1;
+       else if Coordinates(i,Column_Changing) ~= Coordinates(i-1,Column_Changing)
+           nodes_configuration = [nodes_configuration;current_Row];
+           row_index = 1;
+       end
+       end
+       current_Row(row_index) = i;
+       row_index = row_index + 1;
     end
-    
-    nodes_configuration = zeros(numb_of_rows,numb_of_columns);
 
-for i = 1:rows
-    nodes_configuration(new_coordinates(i,1),new_coordinates(i,2)) = i;
-end
+nodes_configuration = [nodes_configuration;current_Row];
+
+nodes_configuration = flip(nodes_configuration);
 
 
 end
