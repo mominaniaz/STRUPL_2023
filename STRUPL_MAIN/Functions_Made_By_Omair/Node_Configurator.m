@@ -5,14 +5,14 @@ function nodes_configuration = Node_Configurator(Coordinates)
 [rows,columns] = size(Coordinates);
 nodes_configuration = 0;
 
-%% Checking to see which column is changing
-Column_Changing = 1;
-
-if Coordinates(1,1) ~= Coordinates(2,1) %if the first column is being varied, 
-    Column_Changing = 2; %It means the second column is the pivot
-else
-    Column_Changing = 1; %Or otherwise
-end
+% %% Checking to see which column is changing
+% Column_Changing = 1;
+% 
+% if Coordinates(1,1) ~= Coordinates(2,1) %if the first column is being varied, 
+%     Column_Changing = 2; %It means the second column is the pivot
+% else
+%     Column_Changing = 1; %Or otherwise
+% end
 
 
 Row_Check = 0;

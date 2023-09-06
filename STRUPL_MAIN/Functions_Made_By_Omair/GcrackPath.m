@@ -81,7 +81,8 @@ for k = 1:Number_of_Nodes %going over the nodes
             if Directions{l}(1)> 0 && Directions{l}(1) < row_node_configuration + 1 &&  Directions{l}(2)> 0 && Directions{l}(2) < column_node_configuration + 1
 
                 Node_at_check = node_configuration(Directions{l}(1),Directions{l}(2));
-                if crack_path_2(Node_at_check,2) ~= 0
+                if Node_at_check ~= 0
+                    if crack_path_2(Node_at_check,2) ~= 0
 
                     Coordinates_Original = [Coordinates_Plate(node_configuration(row,column),1),Coordinates_Plate(node_configuration(row,column),2)];
                     Coordinates_Next = [Coordinates_Plate(Node_at_check,1),Coordinates_Plate(Node_at_check,2)];
@@ -97,6 +98,8 @@ for k = 1:Number_of_Nodes %going over the nodes
                     Crack_Path_Temp = [Node_at_check, Coordinates_Next(1), Coordinates_Next(2), Orientations(l)];
                     Crack_Path_Draw = [Crack_Path_Draw; Crack_Path_Temp];
                 end
+                end
+                
             end
         end
 

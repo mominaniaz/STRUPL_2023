@@ -59,8 +59,8 @@ for i = 1:rows
     Crack_Path_Draw = [];
     Higest_Node_Stress = Crack_Path_Matrix_Max(i,1);
 
-    while true       
-        
+    while true
+
         %Left Right Initiation
         left = column - 1;
         right = column + 1;
@@ -105,15 +105,20 @@ for i = 1:rows
         Directions(8) = {[above,right]};
         Orientations(8) = {'W'};
 
+        %If you want to change the code criteria you have to change this
+        %part
         This_Node = Higest_Node_Stress;
         for l = 1:8
             if Directions{l}(1)> 0 && Directions{l}(1) < rows_nodes_configurtion + 1 &&  Directions{l}(2)> 0 && Directions{l}(2) < columns_node_configuration + 1
                 Node_at_check = node_configuration(Directions{l}(1),Directions{l}(2));
-                if Crack_Path(Node_at_check,2) ~= 0
-                    if abs(Crack_Path(Higest_Node_Stress,2)) < abs(Crack_Path(Node_at_check,2))
-                        Higest_Node_Stress = Node_at_check;
+                if Node_at_check ~= 0
+                    if Crack_Path(Node_at_check,2) ~= 0
+                        if abs(Crack_Path(Higest_Node_Stress,2)) < abs(Crack_Path(Node_at_check,2))
+                            Higest_Node_Stress = Node_at_check;
+                        end
                     end
                 end
+
             end
         end
 
@@ -125,7 +130,7 @@ for i = 1:rows
         Coordinates_Next = [nodal_coordinte_values(Higest_Node_Stress,1),nodal_coordinte_values(Higest_Node_Stress,2)];
         Crack_Path_Temp = [Higest_Node_Stress, Coordinates_Next(1), Coordinates_Next(2)];
         Crack_Path_Draw = [Crack_Path_Draw; Crack_Path_Temp];
-        
+
         [row,column] = find(node_configuration == Higest_Node_Stress);
     end
 
@@ -135,7 +140,7 @@ for i = 1:rows
         Cracks_All(row_Cracks + 1,1) = {Crack_Path_Draw};
     end
 
-    
+
 end
 
 
